@@ -579,9 +579,37 @@
       statusEl.textContent = text;
       statusEl.className = cls;
     }
-    function showNotice(msg) {
+    function showNotice(msg, type = 'error') {
       noticeEl.textContent = msg;
       noticeEl.style.display = 'block';
+      if (type === 'info') {
+        noticeEl.style.background = 'rgba(53,230,255,0.10)';
+        noticeEl.style.borderColor = 'rgba(53,230,255,0.5)';
+        noticeEl.style.color = '#bfe9ff';
+      } else {
+        noticeEl.style.background = '';
+        noticeEl.style.borderColor = '';
+        noticeEl.style.color = '';
+      }
+    }
+
+    // Läuft die Seite in einem eingebetteten iframe (z. B. Vorschau-Panel)?
+    function inIframe() {
+      try { return window.self !== window.top; } catch (_) { return true; }
+    }
+    // Kontextabhängige Erklärung, warum das Mikrofon nicht verfügbar ist.
+    function micBlockedMessage() {
+      if (inIframe()) {
+        return 'Das Mikrofon ist in dieser EINGEBETTETEN Ansicht blockiert – nicht dein System-Mikrofon. '
+             + 'Öffne die Seite in einem eigenen Browser-Tab (Vollbild-Symbol der Vorschau) oder lokal über '
+             + 'http://localhost und erlaube dort den Zugriff.';
+      }
+      if (!window.isSecureContext) {
+        return 'Spracherkennung braucht einen sicheren Kontext. Öffne die Seite über http://localhost oder https '
+             + 'statt als lokale Datei (file://).';
+      }
+      return 'Mikrofonzugriff ist blockiert. Klicke in der Adressleiste auf das Schloss- bzw. Kamerasymbol, '
+           + 'erlaube das Mikrofon und lade die Seite neu.';
     }
 
     // Uhr im HUD
@@ -724,7 +752,7 @@
         if (e.error === 'no-speech' || e.error === 'aborted') return;
         if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
           setStatus('Mikrofon blockiert', 'error');
-          showNotice('Mikrofonzugriff wurde verweigert. Bitte in den Browser-Einstellungen erlauben und neu laden.');
+          showNotice(micBlockedMessage());
           stopListening();
         } else {
           setStatus('Fehler: ' + e.error, 'error');
@@ -782,6 +810,12 @@
       micBtn.style.cursor = 'not-allowed';
     } else {
       setStatus('Bereit', '');
+      // Vorwarnung, falls eingebettet: dort ist das Mikrofon oft blockiert.
+      if (inIframe()) {
+        showNotice('Hinweis: In dieser eingebetteten Vorschau kann das Mikrofon blockiert sein. '
+                 + 'Für die Sprachsteuerung die Seite in einem eigenen Tab öffnen oder lokal über http://localhost starten.',
+                   'info');
+      }
     }
   })();
   </script>
