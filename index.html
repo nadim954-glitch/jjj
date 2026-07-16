@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>J.A.R.V.I.S — Sprach-Interface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --cyan: #35e6ff;
+    --cyan-dim: #1a8fb0;
+    --blue: #0a1c2e;
+    --glow: rgba(53, 230, 255, 0.55);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #02060c;
+    color: var(--cyan);
+    font-family: 'Share Tech Mono', monospace;
+    cursor: default;
+    user-select: none;
+  }
+
+  /* Radialer Hintergrund-Verlauf hinter dem WebGL-Canvas */
+  #bg-gradient {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse at 50% 45%, rgba(20, 60, 90, 0.35) 0%, rgba(4, 10, 18, 0.9) 55%, #01040a 100%);
+  }
+
+  #scene {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+  }
+
+  /* ---------- HUD ---------- */
+  #hud {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 28px 34px;
+  }
+
+  .hud-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  #title {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: clamp(20px, 3.2vw, 40px);
+    letter-spacing: 0.5em;
+    color: #cfefff;
+    text-shadow: 0 0 18px var(--glow), 0 0 42px var(--glow);
+  }
+
+  #title span { color: var(--cyan); }
+
+  #subtitle {
+    margin-top: 6px;
+    font-size: 12px;
+    letter-spacing: 0.28em;
+    color: var(--cyan-dim);
+    text-transform: uppercase;
+  }
+
+  #clock {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.18em;
+    color: var(--cyan-dim);
+    text-align: right;
+  }
+  #clock .big {
+    display: block;
+    font-size: 22px;
+    color: #bfe9ff;
+    text-shadow: 0 0 14px var(--glow);
+  }
+
+  /* Status-/Transkript-Zone — sitzt UNTER dem Orb, damit der Text lesbar bleibt */
+  .hud-center {
+    position: absolute;
+    left: 50%;
+    top: 79%;
+    transform: translate(-50%, -50%);
+    width: min(760px, 88vw);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    /* dezenter dunkler Rückhalt für Lesbarkeit über dem hellen Orb */
+    padding: 16px 26px;
+    border-radius: 16px;
+    background: radial-gradient(ellipse at center, rgba(2,8,16,0.72) 0%, rgba(2,8,16,0.45) 60%, rgba(2,8,16,0) 100%);
+  }
+
+  #status {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 15px;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    text-shadow: 0 0 16px var(--glow);
+    transition: color 0.3s;
+  }
+  #status.listening { color: #6dffb0; text-shadow: 0 0 16px rgba(109,255,176,0.6); }
+  #status.speaking  { color: #ffd166; text-shadow: 0 0 16px rgba(255,209,102,0.6); }
+  #status.error     { color: #ff6b6b; text-shadow: 0 0 16px rgba(255,107,107,0.6); }
+
+  #transcript {
+    min-height: 48px;
+    font-size: clamp(17px, 2.4vw, 26px);
+    line-height: 1.4;
+    color: #e7fbff;
+    text-shadow: 0 0 10px rgba(53,230,255,0.25);
+    max-width: 100%;
+  }
+  #transcript .interim { color: var(--cyan-dim); opacity: 0.8; }
+  #transcript.empty { color: var(--cyan-dim); opacity: 0.55; font-size: 16px; }
+
+  .hud-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+  }
+
+  /* Ziel-Liste */
+  #goals {
+    pointer-events: auto;
+    max-width: 42vw;
+    max-height: 34vh;
+    overflow-y: auto;
+    text-align: left;
+  }
+  #goals h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--cyan-dim);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  #goals ul { list-style: none; }
+  #goals li {
+    font-size: 14px;
+    color: #d5f4ff;
+    padding: 7px 12px;
+    margin-bottom: 6px;
+    border-left: 2px solid var(--cyan);
+    background: linear-gradient(90deg, rgba(53,230,255,0.10), rgba(53,230,255,0));
+    animation: slideIn 0.4s ease;
+  }
+  #goals li .t { color: var(--cyan-dim); font-size: 11px; margin-right: 8px; }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-14px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  #goals::-webkit-scrollbar { width: 5px; }
+  #goals::-webkit-scrollbar-thumb { background: var(--cyan-dim); border-radius: 3px; }
+
+  /* Mikrofon-Button */
+  #controls {
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  #mic-btn {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 2px solid var(--cyan);
+    background: radial-gradient(circle at 50% 40%, rgba(53,230,255,0.25), rgba(53,230,255,0.03));
+    color: var(--cyan);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: all 0.25s;
+    box-shadow: 0 0 20px rgba(53,230,255,0.3), inset 0 0 14px rgba(53,230,255,0.2);
+  }
+  #mic-btn:hover { transform: scale(1.06); box-shadow: 0 0 32px rgba(53,230,255,0.55), inset 0 0 18px rgba(53,230,255,0.3); }
+  #mic-btn svg { width: 30px; height: 30px; fill: currentColor; }
+  #mic-btn.active {
+    border-color: #6dffb0;
+    color: #6dffb0;
+    box-shadow: 0 0 34px rgba(109,255,176,0.6), inset 0 0 18px rgba(109,255,176,0.35);
+    animation: pulseBtn 1.4s ease-in-out infinite;
+  }
+  @keyframes pulseBtn {
+    0%,100% { box-shadow: 0 0 26px rgba(109,255,176,0.45), inset 0 0 14px rgba(109,255,176,0.3); }
+    50%     { box-shadow: 0 0 46px rgba(109,255,176,0.8),  inset 0 0 22px rgba(109,255,176,0.5); }
+  }
+  #mic-hint {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--cyan-dim);
+    text-transform: uppercase;
+  }
+
+  /* Ecken-Marker für den Sci-Fi-Look */
+  .corner {
+    position: fixed;
+    width: 46px;
+    height: 46px;
+    border: 2px solid rgba(53,230,255,0.35);
+    z-index: 2;
+    pointer-events: none;
+  }
+  .corner.tl { top: 16px; left: 16px; border-right: none; border-bottom: none; }
+  .corner.tr { top: 16px; right: 16px; border-left: none; border-bottom: none; }
+  .corner.bl { bottom: 16px; left: 16px; border-right: none; border-top: none; }
+  .corner.br { bottom: 16px; right: 16px; border-left: none; border-top: none; }
+
+  /* Kompatibilitäts-Hinweis */
+  #notice {
+    position: fixed;
+    z-index: 5;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,107,107,0.12);
+    border: 1px solid rgba(255,107,107,0.5);
+    color: #ffb3b3;
+    padding: 10px 18px;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    border-radius: 6px;
+    max-width: 90vw;
+    text-align: center;
+    display: none;
+  }
+
+  @media (max-width: 720px) {
+    #goals { max-width: 60vw; }
+    .hud-bottom { flex-direction: column-reverse; align-items: center; }
+    #controls { flex-direction: row; }
+  }
+</style>
+</head>
+<body>
+  <div id="bg-gradient"></div>
+  <div id="scene"></div>
+
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
+
+  <div id="hud">
+    <div class="hud-top">
+      <div>
+        <div id="title">J<span>.</span>A<span>.</span>R<span>.</span>V<span>.</span>I<span>.</span>S</div>
+        <div id="subtitle">Just A Rather Very Intelligent System</div>
+      </div>
+      <div id="clock"><span class="big" id="clock-time">--:--:--</span><span id="clock-date">—</span></div>
+    </div>
+
+    <div class="hud-center">
+      <div id="status">Initialisiere …</div>
+      <div id="transcript" class="empty">Klicke auf den Orb oder das Mikrofon und nenne mir dein Ziel.</div>
+    </div>
+
+    <div class="hud-bottom">
+      <div id="goals">
+        <h3>Erfasste Ziele</h3>
+        <ul id="goals-list"></ul>
+      </div>
+      <div id="controls">
+        <button id="mic-btn" title="Sprache starten / stoppen" aria-label="Mikrofon">
+          <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2z"/></svg>
+        </button>
+        <div id="mic-hint">Sprechen</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="notice"></div>
+
+  <!-- Fallback: falls das 3D-Modul nicht lädt (z. B. altes vendor-File fehlt),
+       zeigen wir einen CSS-Orb und die Sprachfunktion bleibt voll nutzbar. -->
+  <div id="css-orb-fallback" style="display:none;position:fixed;inset:0;z-index:1;pointer-events:none;">
+    <div class="css-orb"></div>
+  </div>
+  <style>
+    .css-orb {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+      width: min(46vh, 360px); height: min(46vh, 360px); border-radius: 50%;
+      background: radial-gradient(circle at 42% 38%, #dff9ff 0%, #35e6ff 22%, #0a3a7a 62%, #04122a 100%);
+      box-shadow: 0 0 60px 10px rgba(53,230,255,0.55), 0 0 140px 40px rgba(53,230,255,0.28), inset 0 0 60px rgba(255,255,255,0.25);
+      animation: cssPulse 3.2s ease-in-out infinite;
+    }
+    @keyframes cssPulse {
+      0%,100% { transform: translate(-50%,-50%) scale(1);    box-shadow: 0 0 60px 10px rgba(53,230,255,0.5), 0 0 140px 40px rgba(53,230,255,0.25), inset 0 0 60px rgba(255,255,255,0.25); }
+      50%     { transform: translate(-50%,-50%) scale(1.06); box-shadow: 0 0 80px 16px rgba(53,230,255,0.7), 0 0 180px 60px rgba(53,230,255,0.35), inset 0 0 70px rgba(255,255,255,0.35); }
+    }
+  </style>
+
+  <script type="module">
+    import * as THREE from './vendor/three.bundle.js';
+    const { EffectComposer, RenderPass, UnrealBloomPass } = THREE;
+
+    /* =========================================================
+       1) THREE.JS — Szene, Orb, Bloom, Partikel
+       ========================================================= */
+    const sceneEl = document.getElementById('scene');
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.PerspectiveCamera(
+      50, window.innerWidth / window.innerHeight, 0.1, 100
+    );
+    camera.position.set(0, 0, 5.2);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    sceneEl.appendChild(renderer.domElement);
+
+    // ---- Noise (simplex 3D) im GLSL für Vertex-Verschiebung ----
+    const noiseGLSL = `
+      vec4 permute(vec4 x){ return mod(((x*34.0)+1.0)*x, 289.0); }
+      vec4 taylorInvSqrt(vec4 r){ return 1.79284291400159 - 0.85373472095314 * r; }
+      float snoise(vec3 v){
+        const vec2 C = vec2(1.0/6.0, 1.0/3.0);
+        const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+        vec3 i  = floor(v + dot(v, C.yyy));
+        vec3 x0 = v - i + dot(i, C.xxx);
+        vec3 g = step(x0.yzx, x0.xyz);
+        vec3 l = 1.0 - g;
+        vec3 i1 = min(g.xyz, l.zxy);
+        vec3 i2 = max(g.xyz, l.zxy);
+        vec3 x1 = x0 - i1 + 1.0 * C.xxx;
+        vec3 x2 = x0 - i2 + 2.0 * C.xxx;
+        vec3 x3 = x0 - 1.0 + 3.0 * C.xxx;
+        i = mod(i, 289.0);
+        vec4 p = permute(permute(permute(
+                   i.z + vec4(0.0, i1.z, i2.z, 1.0))
+                 + i.y + vec4(0.0, i1.y, i2.y, 1.0))
+                 + i.x + vec4(0.0, i1.x, i2.x, 1.0));
+        float n_ = 1.0/7.0;
+        vec3 ns = n_ * D.wyz - D.xzx;
+        vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+        vec4 x_ = floor(j * ns.z);
+        vec4 y_ = floor(j - 7.0 * x_);
+        vec4 x = x_ * ns.x + ns.yyyy;
+        vec4 y = y_ * ns.x + ns.yyyy;
+        vec4 h = 1.0 - abs(x) - abs(y);
+        vec4 b0 = vec4(x.xy, y.xy);
+        vec4 b1 = vec4(x.zw, y.zw);
+        vec4 s0 = floor(b0)*2.0 + 1.0;
+        vec4 s1 = floor(b1)*2.0 + 1.0;
+        vec4 sh = -step(h, vec4(0.0));
+        vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
+        vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
+        vec3 p0 = vec3(a0.xy, h.x);
+        vec3 p1 = vec3(a0.zw, h.y);
+        vec3 p2 = vec3(a1.xy, h.z);
+        vec3 p3 = vec3(a1.zw, h.w);
+        vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
+        p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
+        vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+        m = m * m;
+        return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
+      }
+    `;
+
+    const uniforms = {
+      u_time:  { value: 0 },
+      u_audio: { value: 0 },      // 0..1 geglätteter Mikrofonpegel
+      u_colorA:{ value: new THREE.Color(0x35e6ff) },
+      u_colorB:{ value: new THREE.Color(0x0a3a7a) },
+    };
+
+    // ---- Kern-Orb ----
+    const orbGeo = new THREE.IcosahedronGeometry(1.3, 64);
+    const orbMat = new THREE.ShaderMaterial({
+      uniforms,
+      vertexShader: noiseGLSL + `
+        uniform float u_time;
+        uniform float u_audio;
+        varying float v_disp;
+        varying vec3  v_normal;
+        void main() {
+          // mehrschichtiges Rauschen für lebendige Oberfläche
+          float t = u_time * 0.35;
+          float n = snoise(normal * 1.6 + vec3(t));
+          n += 0.5 * snoise(normal * 3.2 + vec3(t * 1.7));
+          // Audio verstärkt die Verschiebung -> Orb pulsiert beim Sprechen
+          float amp = 0.14 + u_audio * 0.55;
+          float disp = n * amp;
+          v_disp = disp;
+          v_normal = normal;
+          vec3 pos = position + normal * disp;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform vec3  u_colorA;
+        uniform vec3  u_colorB;
+        uniform float u_audio;
+        uniform float u_time;
+        varying float v_disp;
+        varying vec3  v_normal;
+        void main() {
+          // Farbverlauf nach Verschiebung + Fresnel-artiges Randglühen
+          float mixv = smoothstep(-0.25, 0.35, v_disp);
+          vec3 col = mix(u_colorB, u_colorA, mixv);
+          float rim = pow(1.0 - abs(v_normal.z), 2.0);
+          col += u_colorA * rim * (0.6 + u_audio * 1.2);
+          float brightness = 0.85 + u_audio * 0.9 + 0.15 * sin(u_time * 2.0);
+          gl_FragColor = vec4(col * brightness, 1.0);
+        }
+      `,
+    });
+    const orb = new THREE.Mesh(orbGeo, orbMat);
+    scene.add(orb);
+
+    // ---- innerer Kern (heller Punkt) ----
+    const coreGeo = new THREE.IcosahedronGeometry(0.55, 8);
+    const coreMat = new THREE.MeshBasicMaterial({ color: 0xdff9ff });
+    const core = new THREE.Mesh(coreGeo, coreMat);
+    scene.add(core);
+
+    // ---- additive Glow-Hülle (Halo) ----
+    const glowGeo = new THREE.SphereGeometry(1.75, 48, 48);
+    const glowMat = new THREE.ShaderMaterial({
+      uniforms,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      side: THREE.BackSide,
+      depthWrite: false,
+      vertexShader: `
+        varying vec3 v_normal;
+        void main() {
+          v_normal = normalize(normalMatrix * normal);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform vec3 u_colorA;
+        uniform float u_audio;
+        varying vec3 v_normal;
+        void main() {
+          float intensity = pow(0.72 - dot(v_normal, vec3(0.0,0.0,1.0)), 3.0);
+          gl_FragColor = vec4(u_colorA, 1.0) * intensity * (0.6 + u_audio * 0.9);
+        }
+      `,
+    });
+    const glow = new THREE.Mesh(glowGeo, glowMat);
+    scene.add(glow);
+
+    // ---- rotierender Ring ----
+    const ringGeo = new THREE.TorusGeometry(2.15, 0.008, 8, 200);
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: 0x35e6ff, transparent: true, opacity: 0.35,
+      blending: THREE.AdditiveBlending, depthWrite: false,
+    });
+    const ring = new THREE.Mesh(ringGeo, ringMat);
+    ring.rotation.x = Math.PI * 0.5;
+    scene.add(ring);
+    const ring2 = ring.clone();
+    ring2.scale.setScalar(1.18);
+    ring2.rotation.x = Math.PI * 0.42;
+    ring2.rotation.y = Math.PI * 0.15;
+    scene.add(ring2);
+
+    // ---- Partikel / Sterne ----
+    const starCount = 900;
+    const starPos = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount; i++) {
+      const r = 8 + Math.random() * 22;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      starPos[i*3]   = r * Math.sin(phi) * Math.cos(theta);
+      starPos[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
+      starPos[i*3+2] = r * Math.cos(phi);
+    }
+    const starGeo = new THREE.BufferGeometry();
+    starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+    const starMat = new THREE.PointsMaterial({
+      color: 0x2ba7c8, size: 0.05, transparent: true, opacity: 0.7,
+      blending: THREE.AdditiveBlending, depthWrite: false,
+    });
+    const stars = new THREE.Points(starGeo, starMat);
+    scene.add(stars);
+
+    // ---- Post-Processing: Bloom ----
+    const composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    const bloom = new UnrealBloomPass(
+      new THREE.Vector2(window.innerWidth, window.innerHeight),
+      0.85,  // strength
+      0.6,   // radius
+      0.2    // threshold
+    );
+    composer.addPass(bloom);
+
+    // ---- Render-Loop ----
+    const clock = new THREE.Clock();
+    function animate() {
+      requestAnimationFrame(animate);
+      const dt = clock.getDelta();
+      uniforms.u_time.value += dt;
+
+      // Audiopegel kommt aus dem klassischen Script (window.JARVIS.audioTarget)
+      const target = (window.JARVIS && window.JARVIS.audioTarget) || 0;
+      // sanftes Nachziehen (Lerp)
+      uniforms.u_audio.value += (target - uniforms.u_audio.value) * Math.min(1, dt * 8);
+
+      const a = uniforms.u_audio.value;
+      orb.rotation.y += dt * (0.12 + a * 0.5);
+      orb.rotation.x += dt * 0.04;
+      core.rotation.y -= dt * 0.3;
+      core.scale.setScalar(1 + a * 0.6 + Math.sin(uniforms.u_time.value * 3) * 0.03);
+      ring.rotation.z += dt * 0.25;
+      ring2.rotation.z -= dt * 0.18;
+      stars.rotation.y += dt * 0.01;
+
+      composer.render();
+    }
+    animate();
+
+    // ---- Resize ----
+    window.addEventListener('resize', () => {
+      const w = window.innerWidth, h = window.innerHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+      composer.setSize(w, h);
+    });
+
+    // Klick auf den Orb (den WebGL-Canvas) startet/stoppt die Sprache ebenfalls
+    renderer.domElement.style.cursor = 'pointer';
+    renderer.domElement.addEventListener('click', () => {
+      if (window.JARVIS && window.JARVIS.toggle) window.JARVIS.toggle();
+    });
+
+    // Signalisieren, dass der 3D-Orb erfolgreich läuft (deaktiviert den CSS-Fallback)
+    if (window.JARVIS) window.JARVIS.ready = true;
+  </script>
+
+  <!-- Klassisches Script: UI, Mikrofon, Sprache. Läuft unabhängig von Three.js,
+       damit die Sprachfunktion auch dann funktioniert, wenn das 3D-Modul (oben)
+       nicht geladen werden kann. -->
+  <script>
+  (function () {
+    // Geteilter Zustand mit dem 3D-Modul
+    window.JARVIS = window.JARVIS || {};
+    window.JARVIS.audioTarget = 0;   // 0..1 Mikrofonpegel, vom Modul gelesen
+    window.JARVIS.ready = false;     // wird true, sobald der WebGL-Orb läuft
+
+    /* ---------- UI-Referenzen & Helfer ---------- */
+    const statusEl = document.getElementById('status');
+    const transcriptEl = document.getElementById('transcript');
+    const goalsList = document.getElementById('goals-list');
+    const micBtn = document.getElementById('mic-btn');
+    const noticeEl = document.getElementById('notice');
+
+    function setStatus(text, cls = '') {
+      statusEl.textContent = text;
+      statusEl.className = cls;
+    }
+    function showNotice(msg) {
+      noticeEl.textContent = msg;
+      noticeEl.style.display = 'block';
+    }
+
+    // Uhr im HUD
+    function tickClock() {
+      const now = new Date();
+      const p = (n) => String(n).padStart(2, '0');
+      document.getElementById('clock-time').textContent =
+        `${p(now.getHours())}:${p(now.getMinutes())}:${p(now.getSeconds())}`;
+      document.getElementById('clock-date').textContent =
+        now.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' });
+    }
+    tickClock();
+    setInterval(tickClock, 1000);
+
+    /* ---------- Fallback-Wächter: kommt der 3D-Orb nicht, CSS-Orb zeigen ---------- */
+    setTimeout(function () {
+      if (!window.JARVIS.ready) {
+        const fb = document.getElementById('css-orb-fallback');
+        if (fb) fb.style.display = 'block';
+      }
+    }, 4000);
+
+    /* ---------- Mikrofon-Pegel (Web Audio) -> Orb-Reaktion ---------- */
+    let audioCtx = null, analyser = null, micData = null, micStream = null;
+
+    async function initMicLevel() {
+      if (analyser) return true;
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return false;
+      try {
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const src = audioCtx.createMediaStreamSource(micStream);
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 512;
+        analyser.smoothingTimeConstant = 0.8;
+        src.connect(analyser);
+        micData = new Uint8Array(analyser.frequencyBinCount);
+        pollLevel();
+        return true;
+      } catch (e) {
+        console.warn('Mikrofonpegel nicht verfügbar:', e);
+        return false;
+      }
+    }
+
+    function pollLevel() {
+      if (!analyser) return;
+      analyser.getByteTimeDomainData(micData);
+      // RMS um 128 (Stille) herum
+      let sum = 0;
+      for (let i = 0; i < micData.length; i++) {
+        const v = (micData[i] - 128) / 128;
+        sum += v * v;
+      }
+      const rms = Math.sqrt(sum / micData.length);
+      // normalisieren/verstärken, clamp 0..1
+      window.JARVIS.audioTarget = Math.min(1, rms * 3.5);
+      requestAnimationFrame(pollLevel);
+    }
+
+    /* ---------- Sprachausgabe (TTS) ---------- */
+    let germanVoice = null;
+    function pickVoice() {
+      const voices = speechSynthesis.getVoices();
+      germanVoice =
+        voices.find(v => v.lang === 'de-DE') ||
+        voices.find(v => v.lang && v.lang.startsWith('de')) ||
+        voices[0] || null;
+    }
+    if ('speechSynthesis' in window) {
+      pickVoice();
+      speechSynthesis.onvoiceschanged = pickVoice;
+    }
+
+    function speak(text) {
+      if (!('speechSynthesis' in window)) return;
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'de-DE';
+      if (germanVoice) u.voice = germanVoice;
+      u.rate = 1.0;
+      u.pitch = 1.0;
+      // Während JARVIS spricht: Status anzeigen
+      speaking = true;
+      setStatus('Antwortet …', 'speaking');
+      u.onend = () => {
+        speaking = false;
+        if (!listening) setStatus('Bereit', '');
+      };
+      speechSynthesis.cancel();
+      speechSynthesis.speak(u);
+    }
+
+    /* ---------- Spracherkennung (Web Speech API) ---------- */
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    let listening = false;
+    let speaking = false;
+
+    function addGoal(text) {
+      transcriptEl.classList.remove('empty');
+      const li = document.createElement('li');
+      const time = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+      li.innerHTML = `<span class="t">${time}</span>${text}`;
+      goalsList.prepend(li);
+    }
+
+    function setupRecognition() {
+      recognition = new SR();
+      recognition.lang = 'de-DE';
+      recognition.continuous = true;
+      recognition.interimResults = true;
+
+      recognition.onstart = () => {
+        listening = true;
+        micBtn.classList.add('active');
+        setStatus('Ich höre zu …', 'listening');
+      };
+
+      recognition.onresult = (event) => {
+        let interim = '';
+        let final = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const r = event.results[i];
+          if (r.isFinal) final += r[0].transcript;
+          else interim += r[0].transcript;
+        }
+
+        transcriptEl.classList.remove('empty');
+        if (final.trim()) {
+          const goal = final.trim();
+          transcriptEl.textContent = goal;
+          addGoal(goal);
+          speak('Ziel verstanden: ' + goal);
+        } else {
+          transcriptEl.innerHTML = `<span class="interim">${interim || '…'}</span>`;
+        }
+      };
+
+      recognition.onerror = (e) => {
+        if (e.error === 'no-speech' || e.error === 'aborted') return;
+        if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+          setStatus('Mikrofon blockiert', 'error');
+          showNotice('Mikrofonzugriff wurde verweigert. Bitte in den Browser-Einstellungen erlauben und neu laden.');
+          stopListening();
+        } else {
+          setStatus('Fehler: ' + e.error, 'error');
+        }
+      };
+
+      recognition.onend = () => {
+        // Bei continuous kann die Erkennung von selbst enden -> neu starten, solange gewünscht
+        if (listening) {
+          try { recognition.start(); } catch (_) {}
+        } else {
+          micBtn.classList.remove('active');
+          if (!speaking) setStatus('Bereit', '');
+        }
+      };
+    }
+
+    async function startListening() {
+      if (!SR) return;
+      if (!recognition) setupRecognition();
+      await initMicLevel();               // Pegel-Analyse (best effort)
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+      listening = true;
+      try { recognition.start(); }
+      catch (_) { /* bereits gestartet */ }
+      setStatus('Ich höre zu …', 'listening');
+      micBtn.classList.add('active');
+    }
+
+    function stopListening() {
+      listening = false;
+      window.JARVIS.audioTarget = 0;
+      if (recognition) { try { recognition.stop(); } catch (_) {} }
+      micBtn.classList.remove('active');
+      if (!speaking) setStatus('Bereit', '');
+    }
+
+    function toggleListening() {
+      if (listening) stopListening();
+      else startListening();
+    }
+    // Für den Klick auf den 3D-Orb (im Modul) verfügbar machen
+    window.JARVIS.toggle = toggleListening;
+
+    /* ---------- Verdrahtung / Start ---------- */
+    micBtn.addEventListener('click', toggleListening);
+
+    if (!SR) {
+      setStatus('Nicht unterstützt', 'error');
+      transcriptEl.classList.remove('empty');
+      transcriptEl.textContent = 'Der Orb ist bereit — aber Spracherkennung braucht Chrome oder Edge.';
+      showNotice('Dieser Browser unterstützt keine Spracherkennung (Web Speech API). Bitte Google Chrome oder Microsoft Edge verwenden.');
+      micBtn.disabled = true;
+      micBtn.style.opacity = 0.4;
+      micBtn.style.cursor = 'not-allowed';
+    } else {
+      setStatus('Bereit', '');
+    }
+  })();
+  </script>
+</body>
+</html>
