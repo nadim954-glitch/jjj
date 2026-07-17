@@ -48,9 +48,30 @@ python3 -m http.server 8000
 - **Datenschutz:** Alles läuft lokal im Browser. Die Spracherkennung nutzt die
   browsereigene Web Speech API; es wird nichts an eigene Server gesendet.
 
-## Später eine echte KI anbinden
+## Das Gehirn
 
-Die Stelle zum Andocken ist in `index.html` die `onresult`-Verarbeitung: dort
-wird `goal` erkannt. Statt nur `speak('Ziel verstanden: ' + goal)` könntest du
-`goal` an eine API (z. B. die Claude API) schicken und die Antwort mit `speak()`
-ausgeben.
+JARVIS hat ein **eingebautes Gehirn** direkt im Browser: Es versteht viele
+Absichten (Begrüßung, Small Talk, Uhrzeit/Datum, Ziele nennen/abfragen/löschen),
+antwortet abwechslungsreich und mit Emotion, merkt sich **Name und Ziele über
+Sitzungen hinweg** (localStorage) und hakt bei vagen Zielen nach. Kein Setup,
+keine Kosten, funktioniert offline.
+
+## Optional: echte KI (Claude) anbinden
+
+Für vollwertiges, freies Sprachverständnis lässt sich die **Claude API**
+anbinden — ohne Backend:
+
+1. Auf den Button **„🔑 KI"** klicken und einen Anthropic API-Schlüssel
+   (beginnt mit `sk-ant-…`) eingeben.
+2. Der Schlüssel wird **nur lokal in deinem Browser** (localStorage) gespeichert
+   und ausschließlich an Anthropic gesendet — nie an Dritte, nie ins Repo.
+3. JARVIS antwortet dann über `claude-opus-4-8`. Fällt die KI aus (kein Netz,
+   Fehler, eingebettete Vorschau), übernimmt automatisch das eingebaute Gehirn.
+
+Hinweise:
+- Der direkte Browser-Aufruf nutzt den Header
+  `anthropic-dangerous-direct-browser-access`. Nutze das nur für deinen
+  **persönlichen** Gebrauch mit deinem eigenen Schlüssel.
+- In der eingebetteten Artifact-Vorschau blockiert die Sicherheits-Policy externe
+  API-Aufrufe — die KI funktioniert dort nicht. Öffne die Seite dafür lokal
+  (`http://localhost`) oder über GitHub Pages.

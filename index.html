@@ -231,6 +231,22 @@
     color: var(--cyan-dim);
     text-transform: uppercase;
   }
+  #ki-btn {
+    pointer-events: auto;
+    margin-top: 2px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--cyan);
+    background: rgba(255,146,39,0.08);
+    border: 1px solid rgba(255,146,39,0.45);
+    border-radius: 20px;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+  }
+  #ki-btn:hover { background: rgba(255,146,39,0.18); box-shadow: 0 0 14px rgba(255,146,39,0.35); }
+  #ki-btn.on { color: #ffcf4a; border-color: #ffcf4a; }
 
   /* Ecken-Marker für den Sci-Fi-Look */
   .corner {
@@ -306,6 +322,7 @@
           <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2z"/></svg>
         </button>
         <div id="mic-hint">Sprechen</div>
+        <button id="ki-btn" title="Echte KI (Claude) an-/ausschalten">🔑 KI: aus</button>
       </div>
     </div>
   </div>
@@ -785,6 +802,13 @@
 
       return {
         process, memory: mem,
+        rememberGoal(text) {
+          const t = (text || '').trim();
+          if (!t) return;
+          if (mem.goals.find(g => norm(g.text) === norm(t))) return;
+          mem.goals.push({ text: t, at: Date.now() });
+          persist();
+        },
         greeting() {
           if (mem.name && mem.sessions > 1) {
             return { reply: rnd([`Willkommen zurück, ${mem.name}. Schön, dass du wieder da bist.`,
@@ -899,6 +923,95 @@
       replyEl.classList.add('show');
     }
 
+    /* ================= Echte KI (Claude API) – optional =================
+       Wird nur genutzt, wenn ein API-Schlüssel hinterlegt ist. Der Schlüssel
+       bleibt ausschließlich lokal im Browser (localStorage). Fällt die KI aus
+       (kein Netz, eingebettete Vorschau, Fehler), übernimmt das eingebaute
+       Gehirn automatisch. */
+    let apiKey = null;
+    try { apiKey = localStorage.getItem('jarvis_api_key') || null; } catch (_) {}
+    let convo = [];  // Gesprächsverlauf für die KI
+
+    const KI_SYSTEM =
+      'Du bist JARVIS, ein persönlicher Sprachassistent im Stil von Iron Man. ' +
+      'Sprich Deutsch, natürlich, warm und mit Persönlichkeit, aber KNAPP (1–3 Sätze), ' +
+      'denn deine Antwort wird laut vorgelesen. Duze den Nutzer. Keine Emojis, kein Markdown. ' +
+      'Wenn der Nutzer ein konkretes Ziel oder Vorhaben nennt, bestätige es menschlich und hänge ' +
+      'GANZ AM ENDE in einer eigenen Zeile genau [[ZIEL: <kurzer Zieltext>]] an – sonst niemals. ' +
+      'Ist ein Ziel unklar oder zu vage, frag kurz nach statt es zu speichern. ' +
+      'Du darfst am Ende zusätzlich [[EMO: happy|proud|neutral|unsure]] anhängen, um deine Stimmung auszudrücken.';
+
+    function kiMemoryContext() {
+      const m = Brain.memory;
+      let s = '';
+      if (m.name) s += ' Der Name des Nutzers ist ' + m.name + '.';
+      if (m.goals && m.goals.length) {
+        s += ' Bereits gespeicherte Ziele: ' + m.goals.slice(-5).map(g => g.text).join('; ') + '.';
+      }
+      return s;
+    }
+
+    async function askClaude(text) {
+      convo.push({ role: 'user', content: text });
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-opus-4-8',
+          max_tokens: 300,
+          system: KI_SYSTEM + kiMemoryContext(),
+          messages: convo
+        })
+      });
+      if (!res.ok) {
+        let detail = '';
+        try { detail = (await res.json()).error?.message || ''; } catch (_) {}
+        throw new Error('HTTP ' + res.status + (detail ? ' – ' + detail : ''));
+      }
+      const data = await res.json();
+      const full = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('').trim();
+      convo.push({ role: 'assistant', content: full });
+      if (convo.length > 20) convo = convo.slice(-20);
+
+      let emotion = 'neutral', goal = null;
+      const emo = full.match(/\[\[EMO:\s*(happy|proud|neutral|unsure)\s*\]\]/i);
+      if (emo) emotion = emo[1].toLowerCase();
+      const zg = full.match(/\[\[ZIEL:\s*([^\]]+)\]\]/i);
+      if (zg) goal = zg[1].trim();
+      const reply = full.replace(/\[\[EMO:[^\]]*\]\]/ig, '').replace(/\[\[ZIEL:[^\]]*\]\]/ig, '').trim();
+      return { reply: reply || 'Ich bin da.', emotion, goal };
+    }
+
+    // Zentrale Verarbeitung eines fertig erkannten Satzes: erst KI, sonst Gehirn.
+    async function handleFinal(said) {
+      if (apiKey) {
+        setStatus('Denkt nach …', 'speaking');
+        try {
+          const res = await askClaude(said);
+          if (res.goal) { Brain.rememberGoal(res.goal); addGoal(res.goal); }
+          showReply(res.reply);
+          speak(res.reply, res.emotion);
+          return;
+        } catch (e) {
+          console.warn('KI-Fehler:', e);
+          showNotice('KI nicht erreichbar (' + (e.message || 'Fehler') + '). '
+            + 'Ich nutze das eingebaute Gehirn. In der eingebetteten Vorschau ist die KI blockiert – '
+            + 'öffne die Seite lokal oder auf GitHub Pages.', 'error');
+          // weiter zum lokalen Gehirn
+        }
+      }
+      const r = Brain.process(said);
+      if (r.action && r.action.type === 'addGoal') addGoal(r.action.text);
+      if (r.action && r.action.type === 'clearGoals') goalsList.innerHTML = '';
+      showReply(r.reply);
+      speak(r.reply, r.emotion);
+    }
+
     /* ---------- Spracherkennung (Web Speech API) ---------- */
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition = null;
@@ -938,12 +1051,8 @@
         if (final.trim()) {
           const said = final.trim();
           transcriptEl.textContent = said;
-          // durchs Gehirn schicken -> menschliche, situationsabhängige Antwort
-          const res = Brain.process(said);
-          if (res.action && res.action.type === 'addGoal') addGoal(res.action.text);
-          if (res.action && res.action.type === 'clearGoals') goalsList.innerHTML = '';
-          showReply(res.reply);
-          speak(res.reply, res.emotion);
+          // KI (falls Schlüssel hinterlegt), sonst eingebautes Gehirn
+          handleFinal(said);
         } else {
           transcriptEl.innerHTML = `<span class="interim">${interim || '…'}</span>`;
         }
@@ -1000,6 +1109,35 @@
 
     /* ---------- Verdrahtung / Start ---------- */
     micBtn.addEventListener('click', toggleListening);
+
+    // KI-Schlüssel setzen/löschen (bleibt nur lokal im Browser)
+    const kiBtn = document.getElementById('ki-btn');
+    function updateKiBtn() {
+      kiBtn.textContent = apiKey ? '🔑 KI: an' : '🔑 KI: aus';
+      kiBtn.classList.toggle('on', !!apiKey);
+    }
+    kiBtn.addEventListener('click', () => {
+      const v = prompt(
+        'Anthropic API-Schlüssel eingeben (beginnt mit sk-ant-…).\n' +
+        'Der Schlüssel wird NUR lokal in deinem Browser gespeichert und nur an Anthropic gesendet.\n' +
+        'Feld leeren und OK = KI wieder ausschalten.',
+        apiKey || ''
+      );
+      if (v === null) return; // Abbrechen
+      const val = v.trim();
+      if (val) {
+        apiKey = val;
+        try { localStorage.setItem('jarvis_api_key', val); } catch (_) {}
+        showNotice('KI aktiviert – JARVIS antwortet jetzt mit echter Intelligenz (Claude).', 'info');
+      } else {
+        apiKey = null;
+        try { localStorage.removeItem('jarvis_api_key'); } catch (_) {}
+        convo = [];
+        showNotice('KI ausgeschaltet – das eingebaute Gehirn übernimmt wieder.', 'info');
+      }
+      updateKiBtn();
+    });
+    updateKiBtn();
 
     // Gemerkte Ziele früherer Sitzungen wieder anzeigen (Kontinuität = „lernen")
     (Brain.memory.goals || []).forEach(g => addGoal(g.text));
