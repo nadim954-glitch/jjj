@@ -306,6 +306,150 @@
   opacity: 0.9;
 }
 
+/* --- Sanierungs-Story: gepinnte Scrollytelling-Sequenz -------------------
+   Klassisches Sticky-Pattern: der Nutzer scrollt normal, das Panel bleibt
+   für die Dauer der Sequenz stehen (kein Scroll-Jacking, kein Abfangen von
+   Scroll-Events). Fortschritt 0..1 wird passiv aus der Scrollposition
+   gelesen und auf Transform/Opacity/Clip-Path einzelner Figuren abgebildet. */
+.story {
+  position: relative;
+  height: 380vh;
+}
+
+.story__sticky {
+  position: sticky;
+  top: 8vh;
+  height: 82vh;
+  max-height: 680px;
+  display: flex;
+  align-items: center;
+}
+
+.story__sticky .container {
+  width: 100%;
+}
+
+.story__panel {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-l);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-l);
+  background: var(--c-paper);
+}
+
+.story__stage {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.story__caption {
+  margin-top: var(--space-5);
+  font-size: 0.85rem;
+  color: var(--color-text-soft);
+  max-width: 68ch;
+}
+
+/* Bühnenelemente */
+.story__room path {
+  fill: none;
+  stroke: var(--c-navy-800);
+  stroke-width: 2.5;
+}
+.story__room .story__floor {
+  stroke: var(--c-stone-300);
+}
+
+.story__stain {
+  fill: var(--c-water-500);
+  fill-opacity: 0.4;
+  opacity: var(--stain-op, 1);
+}
+.story__crack {
+  fill: none;
+  stroke: var(--c-stone-400);
+  stroke-width: 1.5;
+  opacity: var(--stain-op, 1);
+}
+.story__puddle {
+  fill: var(--c-water-500);
+  fill-opacity: 0.4;
+  opacity: var(--puddle-op, 1);
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(var(--puddle-scale, 1));
+}
+.story__puddle-ripples {
+  fill: none;
+  stroke: var(--c-water-600);
+  stroke-width: 1.5;
+  opacity: calc(var(--puddle-op, 1) * 0.6);
+}
+
+.story__figure-body {
+  fill: var(--c-navy-700);
+}
+.story__figure-head {
+  fill: var(--c-navy-700);
+}
+.story__figure-limb {
+  fill: none;
+  stroke: var(--c-navy-700);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.story__case {
+  fill: none;
+  stroke: var(--c-water-600);
+  stroke-width: 2;
+}
+.story__roller {
+  fill: var(--c-water-600);
+}
+
+.story__dryer-body {
+  fill: none;
+  stroke: var(--c-navy-800);
+  stroke-width: 2;
+}
+.story__dryer-blade {
+  color: var(--c-water-600);
+}
+
+.story__paint {
+  fill: var(--c-water-050);
+  stroke: var(--c-water-300);
+  stroke-width: 1.5;
+}
+
+.story__accent {
+  fill: none;
+  stroke: var(--c-water-600);
+  stroke-width: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story {
+    height: auto;
+  }
+  .story__sticky {
+    position: static;
+    height: auto;
+    top: auto;
+  }
+  .story__panel {
+    aspect-ratio: 900 / 480;
+  }
+  .story__stain,
+  .story__crack,
+  .story__puddle,
+  .story__puddle-ripples {
+    opacity: 0 !important;
+  }
+}
+
 /* --- Reduzierte Bewegung: alle Loops/Parallax deaktivieren --------------- */
 @media (prefers-reduced-motion: reduce) {
   [data-parallax] {

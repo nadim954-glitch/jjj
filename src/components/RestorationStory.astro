@@ -1,0 +1,111 @@
+---
+// Scroll-gebundene Sanierungs-Story: Anfahrt mit Trocknungsgerät → Trocknung →
+// Abbau → Wiederherstellung/Anstrich. Klassisches Sticky-Scrollytelling:
+// der Nutzer scrollt normal (kein Scroll-Jacking), ein Panel bleibt kurz
+// stehen, während eine mehrstufige, selbst gezeichnete Sequenz abläuft.
+// Schematische Eigenillustration – kein reales Projektfoto (Kap. 4.3).
+// Unter prefers-reduced-motion: statische Endansicht + Textbeschreibung.
+---
+<div class="story" data-story>
+  <div class="story__sticky">
+    <div class="container">
+      <div class="story__panel">
+        <svg
+          class="story__stage"
+          viewBox="0 0 900 480"
+          role="img"
+          aria-label="Animierte, schematische Darstellung: Ein Techniker bringt ein Trocknungsgerät, die Feuchtigkeit trocknet, das Gerät wird abgebaut, ein zweites Team stellt den Raum wieder her und streicht die betroffene Stelle neu."
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <!-- Raum (statisch) -->
+          <g class="story__room">
+            <path d="M200 410 V90 H700 V410" />
+            <path d="M160 410 H740" class="story__floor" />
+          </g>
+
+          <!-- Schaden: Wasserfleck, Riss, Pfütze -->
+          <g data-el="damage">
+            <path
+              class="story__stain"
+              d="M385 120c22 18 34 36 34 55a34 34 0 1 1-68 0c0-19 12-37 34-55Z"
+            />
+            <path class="story__crack" d="M385 228 396 250 382 268 392 292" />
+            <ellipse class="story__puddle" cx="390" cy="401" rx="58" ry="9" />
+            <path
+              class="story__puddle-ripples"
+              d="M340 401c12-4 24-4 36 0M382 401c12-4 24-4 36 0M424 401c12-4 24-4 36 0"
+            />
+          </g>
+
+          <!-- Techniker 1: Anfahrt mit Trocknungsgerät -->
+          <g data-el="tech1" style="opacity:0">
+            <path class="story__figure-body" d="M-13 -32Q0 -66 13 -32L13 0-13 0Z" />
+            <circle class="story__figure-head" cx="0" cy="-78" r="11" />
+            <path class="story__figure-limb" d="M10 -46 30 -34" />
+            <g data-el="tech1case">
+              <rect class="story__case" x="26" y="-40" width="18" height="13" rx="2" />
+              <path class="story__case" d="M30 -40q4-6 8 0" />
+            </g>
+          </g>
+
+          <!-- Trocknungsgerät: erscheint, läuft, wird abgebaut -->
+          <g data-el="dryer" style="opacity:0">
+            <rect class="story__dryer-body" x="-16" y="-46" width="32" height="40" rx="5" />
+            <circle class="story__dryer-body story__dryer-fan" cx="0" cy="-26" r="11" />
+            <path
+              class="drying-motif__blade story__dryer-blade"
+              d="M0 -37V-15M-11 -26H11"
+            />
+            <path class="drying-motif__flow" d="M16 -34c14-3 24 0 32 6" />
+            <path class="drying-motif__flow drying-motif__flow--2" d="M16 -26c15 0 26 4 34 10" />
+            <path class="drying-motif__flow drying-motif__flow--3" d="M16 -18c13 4 22 8 28 14" />
+          </g>
+
+          <!-- Techniker 2: Wiederherstellung / Anstrich (Arm/Roller nach links
+               zur Wandstelle hin, da von rechts kommend) -->
+          <g data-el="tech2" style="opacity:0">
+            <path class="story__figure-body" d="M-13 -32Q0 -66 13 -32L13 0-13 0Z" />
+            <circle class="story__figure-head" cx="0" cy="-78" r="11" />
+            <path class="story__figure-limb" d="M-10 -46 -32 -36" />
+            <rect class="story__roller" x="-40" y="-40" width="8" height="18" rx="4" />
+          </g>
+
+          <!-- Frischer Anstrich deckt die betroffene Stelle ab -->
+          <defs>
+            <clipPath id="story-paint-clip">
+              <rect data-el="paintrect" x="330" y="140" width="0" height="90" rx="6" />
+            </clipPath>
+          </defs>
+          <rect
+            class="story__paint"
+            x="330"
+            y="140"
+            width="110"
+            height="90"
+            rx="6"
+            clip-path="url(#story-paint-clip)"
+          />
+
+          <!-- Finale Akzente: Bilderrahmen, Pflanze -->
+          <g data-el="accents" style="opacity:0">
+            <rect class="story__accent" x="520" y="130" width="70" height="50" rx="3" />
+            <path
+              class="story__accent"
+              d="M600 410v-40M600 372c-13 0-21-9-21-20 11 0 21 8 21 20Zm0 0c13 0 21-9 21-20-11 0-21 8-21 20Z"
+            />
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <p class="story__caption">
+    Schematische Darstellung: <strong>1.</strong> Anfahrt und Aufbau des
+    Trocknungsgeräts · <strong>2.</strong> kontrollierte Trocknung ·
+    <strong>3.</strong> Abbau nach erfolgter Trocknung · <strong>4.</strong>
+    Wiederherstellung, inklusive Anstrich der betroffenen Fläche. Kein reales
+    Projektfoto.
+  </p>
+</div>

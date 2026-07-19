@@ -10,7 +10,7 @@ import AreaMap from '../components/AreaMap.astro';
 import RippleMotif from '../components/RippleMotif.astro';
 import DryingMotif from '../components/DryingMotif.astro';
 import WaveDivider from '../components/WaveDivider.astro';
-import CompareReveal from '../components/CompareReveal.astro';
+import RestorationStory from '../components/RestorationStory.astro';
 import { site } from '../config/site';
 import { servicesData } from '../data/services';
 import { faqPreview } from '../data/faq';
@@ -221,27 +221,23 @@ const ablauf = [
     </div>
   </section>
 
-  <!-- VORHER / NACHHER (Wiederherstellung) -->
-  <section class="section section--alt" aria-labelledby="vorher-nachher-h">
+  <!-- SANIERUNGS-STORY (gepinnte Scrollytelling-Sequenz) -->
+  <section class="section section--alt" aria-labelledby="story-h" style="padding-bottom:0">
     <div class="container">
-      <div class="split">
-        <div class="reveal">
-          <span class="eyebrow">Wiederherstellung</span>
-          <h2 id="vorher-nachher-h">So verändert sich ein Raum.</h2>
-          <span class="measure-line"></span>
-          <p class="lead" style="margin-top:var(--space-5)">
-            Von der durchfeuchteten Wand bis zum wieder nutzbaren Raum: Trocknung,
-            Sanierung und Wiederherstellung greifen ineinander. Bewegen Sie den
-            Regler, um den Unterschied zu sehen.
-          </p>
-          <p style="margin-top:var(--space-4)">
-            <a href="/leistungen/wiederherstellung/" class="link-arrow">Zur Wiederherstellung</a>
-          </p>
-        </div>
-        <div class="split__media reveal">
-          <CompareReveal />
-        </div>
+      <div class="section-head reveal" style="max-width:56ch">
+        <span class="eyebrow">Ablauf einer Sanierung</span>
+        <h2 id="story-h">Vom Schaden zur Wiederherstellung.</h2>
+        <span class="measure-line"></span>
+        <p class="lead" style="margin-top:var(--space-5)">
+          Anfahrt und Aufbau des Trocknungsgeräts, kontrollierte Trocknung, Abbau
+          und Wiederherstellung inklusive Anstrich – scrollen Sie weiter, um den
+          Ablauf zu sehen.
+        </p>
       </div>
+    </div>
+    <RestorationStory />
+    <div class="container" style="padding-block:var(--space-7)">
+      <a href="/leistungen/wiederherstellung/" class="link-arrow">Zur Wiederherstellung</a>
     </div>
   </section>
 

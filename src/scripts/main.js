@@ -222,6 +222,89 @@
     }
   });
 
+  /* --- Sanierungs-Story (gepinnte Scrollytelling-Sequenz) ----------------
+     Kein Scroll-Jacking: das native Scrollverhalten bleibt unverändert.
+     Ein Panel bleibt per position:sticky kurz stehen; der Fortschritt 0..1
+     wird passiv aus der Scrollposition gelesen (rAF-gedrosselt) und auf
+     Transform/Opacity/Clip-Path der Figuren abgebildet. Unter reduzierter
+     Bewegung: einmalig die finale, statische Endansicht. */
+  var story = document.querySelector('[data-story]');
+  if (story) {
+    var storyEls = {};
+    ['damage', 'tech1', 'tech1case', 'dryer', 'tech2', 'paintrect', 'accents'].forEach(function (k) {
+      storyEls[k] = story.querySelector('[data-el="' + k + '"]');
+    });
+
+    var clamp01 = function (v) {
+      return Math.max(0, Math.min(1, v));
+    };
+    var mapP = function (p, p0, p1, from, to) {
+      if (p1 === p0) return p >= p1 ? to : from;
+      var t = clamp01((p - p0) / (p1 - p0));
+      return from + (to - from) * t;
+    };
+    var setTransform = function (el, x, y, opacity) {
+      if (!el) return;
+      el.setAttribute('transform', 'translate(' + x.toFixed(1) + ',' + y.toFixed(1) + ')');
+      el.style.opacity = clamp01(opacity).toFixed(2);
+    };
+
+    var renderStory = function (p) {
+      var puddleOp = mapP(p, 0.26, 0.58, 1, 0);
+      var puddleScale = mapP(p, 0.26, 0.58, 1, 0.15);
+      var stainOp = mapP(p, 0.3, 0.6, 1, 0);
+      if (storyEls.damage) {
+        storyEls.damage.style.setProperty('--puddle-op', String(puddleOp));
+        storyEls.damage.style.setProperty('--puddle-scale', String(puddleScale));
+        storyEls.damage.style.setProperty('--stain-op', String(stainOp));
+      }
+
+      var t1x = mapP(p, 0.06, 0.2, 80, 540);
+      var t1Op = p < 0.28 ? mapP(p, 0.06, 0.1, 0, 1) : mapP(p, 0.28, 0.33, 1, 0);
+      setTransform(storyEls.tech1, t1x, 410, t1Op);
+      if (storyEls.tech1case) {
+        storyEls.tech1case.style.opacity = String(p < 0.2 ? 1 : clamp01(mapP(p, 0.2, 0.24, 1, 0)));
+      }
+
+      var dryerOp = p < 0.58 ? mapP(p, 0.22, 0.27, 0, 1) : mapP(p, 0.58, 0.68, 1, 0);
+      var dryerLift = mapP(p, 0.58, 0.68, 0, -22);
+      setTransform(storyEls.dryer, 420, 410 + dryerLift, dryerOp);
+
+      var t2x = mapP(p, 0.66, 0.8, 820, 460);
+      var t2Op = p < 0.92 ? mapP(p, 0.66, 0.7, 0, 1) : mapP(p, 0.92, 0.98, 1, 0);
+      setTransform(storyEls.tech2, t2x, 410, t2Op);
+
+      if (storyEls.paintrect) {
+        storyEls.paintrect.setAttribute('width', mapP(p, 0.7, 0.9, 0, 110).toFixed(1));
+      }
+      if (storyEls.accents) {
+        storyEls.accents.style.opacity = clamp01(mapP(p, 0.9, 1, 0, 1)).toFixed(2);
+      }
+    };
+
+    if (reduceMotion) {
+      renderStory(1);
+    } else {
+      var storyRafId = null;
+      var computeStoryProgress = function () {
+        var rect = story.getBoundingClientRect();
+        var total = rect.height - window.innerHeight;
+        if (total <= 0) return 1;
+        return clamp01(-rect.top / total);
+      };
+      var storyTick = function () {
+        renderStory(computeStoryProgress());
+        storyRafId = null;
+      };
+      var queueStory = function () {
+        if (storyRafId === null) storyRafId = requestAnimationFrame(storyTick);
+      };
+      window.addEventListener('scroll', queueStory, { passive: true });
+      window.addEventListener('resize', queueStory);
+      queueStory();
+    }
+  }
+
   /* --- Formular-UX (nur ergänzend, native Validierung bleibt Fallback) --- */
   var form = document.querySelector('[data-contact-form]');
   if (form) initContactForm(form);
