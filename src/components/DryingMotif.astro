@@ -1,0 +1,36 @@
+---
+// Dekoratives Trocknungsgerät-Motiv: rotierender Lüfter, animierter Luftstrom,
+// schrumpfender Feuchtigkeitstropfen (Bautrocknung). Illustrativ, aria-hidden.
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+<svg
+  class={`drying-motif motion-loop ${className}`}
+  viewBox="0 0 220 220"
+  aria-hidden="true"
+  xmlns="http://www.w3.org/2000/svg"
+  stroke="currentColor"
+  fill="none"
+  stroke-width="2"
+  stroke-linecap="round"
+>
+  <!-- Gerätekörper -->
+  <rect x="66" y="68" width="88" height="96" rx="12" />
+  <circle cx="110" cy="114" r="28" />
+  <path class="drying-motif__blade" d="M110 92v44M88 114h44M96 98l28 32M124 98l-28 32" />
+
+  <!-- Luftstromlinien -->
+  <path class="drying-motif__flow drying-motif__flow--1" d="M156 90c22-6 38 0 52 10" />
+  <path class="drying-motif__flow drying-motif__flow--2" d="M156 114c24 0 42 6 56 16" />
+  <path class="drying-motif__flow drying-motif__flow--3" d="M156 138c22 6 36 12 48 20" />
+
+  <!-- Feuchtigkeitstropfen (schrumpfend) -->
+  <path
+    class="drying-motif__drop"
+    d="M58 36c7 10 12 18 12 25a12 12 0 1 1-24 0c0-7 5-15 12-25Z"
+    fill="currentColor"
+    stroke="none"
+  />
+</svg>

@@ -7,6 +7,10 @@ import MediaPlaceholder from '../components/MediaPlaceholder.astro';
 import FaqAccordion from '../components/FaqAccordion.astro';
 import CtaSection from '../components/CtaSection.astro';
 import AreaMap from '../components/AreaMap.astro';
+import RippleMotif from '../components/RippleMotif.astro';
+import DryingMotif from '../components/DryingMotif.astro';
+import WaveDivider from '../components/WaveDivider.astro';
+import CompareReveal from '../components/CompareReveal.astro';
 import { site } from '../config/site';
 import { servicesData } from '../data/services';
 import { faqPreview } from '../data/faq';
@@ -51,8 +55,9 @@ const ablauf = [
   description="Wasserschaden in Berlin? SANI Trocknung hilft rund um die Uhr: Leckageortung, Trocknung, Sanierung und Wiederherstellung aus einer Hand. Jetzt melden."
 >
   <!-- HERO -->
-  <section class="hero">
+  <section class="hero on-dark">
     <div class="container container--wide hero__inner">
+      <RippleMotif class="hero__decor" data-parallax="-0.05" />
       <div class="hero__content">
         <span class="eyebrow hero__eyebrow">24/7-Notdienst · Berlin &amp; Umland</span>
         <h1>Wasserschaden in Berlin? Wir kümmern uns um den Rest.</h1>
@@ -75,7 +80,7 @@ const ablauf = [
           ))}
         </ul>
       </div>
-      <div class="hero__media">
+      <div class="hero__media" data-parallax="0.08">
         <!-- Hero-Medium: in Produktion Video (Desktop) + Poster (mobil), Kap. 13 -->
         <MediaPlaceholder
           file="hero-poster"
@@ -84,6 +89,7 @@ const ablauf = [
         />
       </div>
     </div>
+    <WaveDivider />
   </section>
 
   <!-- SOFORTHILFE -->
@@ -130,26 +136,32 @@ const ablauf = [
   </section>
 
   <!-- RUNDUM-SORGLOS (Ankerband dunkel) -->
-  <section class="section section--dark" aria-labelledby="rundum-h">
+  <section class="section section--dark rundum" aria-labelledby="rundum-h">
     <div class="container">
-      <div class="section-head reveal">
-        <span class="eyebrow">Rundum-sorglos</span>
-        <h2 id="rundum-h">Ein Ansprechpartner. Alle wichtigen Schritte.</h2>
-        <span class="measure-line"></span>
+      <div class="split">
+        <div>
+          <span class="eyebrow reveal">Rundum-sorglos</span>
+          <h2 id="rundum-h" class="reveal">Ein Ansprechpartner. Alle wichtigen Schritte.</h2>
+          <span class="measure-line reveal"></span>
+          <p class="lead reveal" style="max-width:58ch;margin-top:var(--space-5)">
+            Bei einem Wasserschaden greifen viele Arbeitsschritte ineinander. Bei uns
+            behalten Sie einen Ansprechpartner – wir koordinieren den Rest.
+          </p>
+          <ul class="chain reveal-stagger">
+            {['Schadenaufnahme', 'Leckageortung', 'Feuchtemessung', 'Rückbau', 'Technische Trocknung', 'Sanierung', 'Wiederherstellung'].map((step) => (
+              <li class="chain__item">{step}</li>
+            ))}
+          </ul>
+          <p class="text-soft reveal" style="color:var(--color-text-inverse-soft);margin-top:var(--space-5)">
+            Der konkrete Umfang richtet sich immer nach Schadenbild und Auftrag.
+          </p>
+        </div>
+        <div class="rundum__motif reveal" data-parallax="0.1">
+          <DryingMotif />
+        </div>
       </div>
-      <p class="lead reveal" style="max-width:58ch">
-        Bei einem Wasserschaden greifen viele Arbeitsschritte ineinander. Bei uns
-        behalten Sie einen Ansprechpartner – wir koordinieren den Rest.
-      </p>
-      <ul class="chain reveal-stagger">
-        {['Schadenaufnahme', 'Leckageortung', 'Feuchtemessung', 'Rückbau', 'Technische Trocknung', 'Sanierung', 'Wiederherstellung'].map((step) => (
-          <li class="chain__item">{step}</li>
-        ))}
-      </ul>
-      <p class="text-soft reveal" style="color:var(--color-text-inverse-soft);margin-top:var(--space-5)">
-        Der konkrete Umfang richtet sich immer nach Schadenbild und Auftrag.
-      </p>
     </div>
+    <WaveDivider />
   </section>
 
   <!-- ZIELGRUPPEN -->
@@ -202,15 +214,39 @@ const ablauf = [
             <a href="/einsatzgebiete/" class="link-arrow">Alle Einsatzgebiete ansehen</a>
           </p>
         </div>
-        <div class="split__media reveal">
+        <div class="split__media reveal" data-parallax="0.08">
           <AreaMap />
         </div>
       </div>
     </div>
   </section>
 
+  <!-- VORHER / NACHHER (Wiederherstellung) -->
+  <section class="section section--alt" aria-labelledby="vorher-nachher-h">
+    <div class="container">
+      <div class="split">
+        <div class="reveal">
+          <span class="eyebrow">Wiederherstellung</span>
+          <h2 id="vorher-nachher-h">So verändert sich ein Raum.</h2>
+          <span class="measure-line"></span>
+          <p class="lead" style="margin-top:var(--space-5)">
+            Von der durchfeuchteten Wand bis zum wieder nutzbaren Raum: Trocknung,
+            Sanierung und Wiederherstellung greifen ineinander. Bewegen Sie den
+            Regler, um den Unterschied zu sehen.
+          </p>
+          <p style="margin-top:var(--space-4)">
+            <a href="/leistungen/wiederherstellung/" class="link-arrow">Zur Wiederherstellung</a>
+          </p>
+        </div>
+        <div class="split__media reveal">
+          <CompareReveal />
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ABLAUF -->
-  <section class="section section--alt" aria-labelledby="ablauf-h">
+  <section class="section" aria-labelledby="ablauf-h">
     <div class="container">
       <div class="section-head reveal">
         <span class="eyebrow">Ablauf</span>
@@ -229,7 +265,7 @@ const ablauf = [
   </section>
 
   <!-- FAQ-VORSCHAU -->
-  <section class="section" aria-labelledby="faq-h">
+  <section class="section section--alt" aria-labelledby="faq-h">
     <div class="container container--narrow">
       <div class="section-head reveal">
         <span class="eyebrow">Häufige Fragen</span>
@@ -278,6 +314,22 @@ const ablauf = [
     .check-list--cols {
       grid-template-columns: 1fr 1fr;
       column-gap: var(--space-6);
+    }
+  }
+
+  .rundum {
+    position: relative;
+    overflow: hidden;
+  }
+  .rundum__motif {
+    width: min(220px, 60%);
+    margin-inline: auto;
+    color: var(--c-water-300);
+  }
+  @media (min-width: 900px) {
+    .rundum__motif {
+      width: 100%;
+      max-width: 240px;
     }
   }
 </style>

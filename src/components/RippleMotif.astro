@@ -1,0 +1,22 @@
+---
+// Dekoratives Wassertropfen/Ripple-Motiv (Wasserschaden, Leckage, Feuchtigkeit).
+// Rein illustrativ, aria-hidden, deaktiviert unter prefers-reduced-motion.
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+<svg
+  class={`ripple-motif motion-loop ${className}`}
+  viewBox="0 0 200 200"
+  aria-hidden="true"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <circle class="ripple-motif__ring ripple-motif__ring--1" cx="100" cy="122" r="14" />
+  <circle class="ripple-motif__ring ripple-motif__ring--2" cx="100" cy="122" r="14" />
+  <circle class="ripple-motif__ring ripple-motif__ring--3" cx="100" cy="122" r="14" />
+  <path
+    class="ripple-motif__drop"
+    d="M100 44c9 13 16 22 16 31a16 16 0 1 1-32 0c0-9 7-18 16-31Z"
+  />
+</svg>

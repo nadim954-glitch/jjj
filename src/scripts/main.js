@@ -160,6 +160,68 @@
     sbObserver.observe(formAnchor);
   }
 
+  /* --- Parallax (transform-only, scroll-linked, kein Scroll-Jacking) ----- */
+  if (!reduceMotion) {
+    var parallaxEls = Array.prototype.slice.call(document.querySelectorAll('[data-parallax]'));
+    if (parallaxEls.length) {
+      var rafId = null;
+      var updateParallax = function () {
+        var vh = window.innerHeight;
+        parallaxEls.forEach(function (el) {
+          var rect = el.getBoundingClientRect();
+          if (rect.bottom < -200 || rect.top > vh + 200) return; // nur nahe am Viewport
+          var speed = parseFloat(el.getAttribute('data-parallax')) || 0.12;
+          var center = rect.top + rect.height / 2 - vh / 2;
+          el.style.transform = 'translate3d(0,' + (center * speed * -1).toFixed(1) + 'px,0)';
+        });
+        rafId = null;
+      };
+      var queueParallax = function () {
+        if (rafId === null) rafId = requestAnimationFrame(updateParallax);
+      };
+      window.addEventListener('scroll', queueParallax, { passive: true });
+      window.addEventListener('resize', queueParallax);
+      updateParallax();
+    }
+  }
+
+  /* --- Vorher/Nachher-Regler (Wiederherstellung) -------------------------
+     Native <input type="range">: per Maus, Touch, Tastatur bedienbar.
+     Beim ersten Sichtbarwerden fährt der Regler einmalig auf 55% (Reveal);
+     die CSS-Transition dafür entfällt automatisch unter reduced-motion. --- */
+  document.querySelectorAll('[data-compare]').forEach(function (compare) {
+    var range = compare.querySelector('[data-compare-range]');
+    var frame = compare.querySelector('.compare__frame');
+    if (!range || !frame) return;
+    var setPos = function (v) {
+      frame.style.setProperty('--compare-pos', v + '%');
+    };
+    setPos(range.value);
+    range.addEventListener('input', function () {
+      setPos(range.value);
+    });
+    if ('IntersectionObserver' in window) {
+      var revealed = false;
+      var cio = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting && !revealed) {
+              revealed = true;
+              range.value = '55';
+              setPos(55);
+              cio.unobserve(compare);
+            }
+          });
+        },
+        { threshold: 0.35 }
+      );
+      cio.observe(compare);
+    } else {
+      range.value = '55';
+      setPos(55);
+    }
+  });
+
   /* --- Formular-UX (nur ergänzend, native Validierung bleibt Fallback) --- */
   var form = document.querySelector('[data-contact-form]');
   if (form) initContactForm(form);

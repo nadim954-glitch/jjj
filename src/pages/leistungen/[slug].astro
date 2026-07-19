@@ -6,6 +6,9 @@ import Icon from '../../components/Icon.astro';
 import MediaPlaceholder from '../../components/MediaPlaceholder.astro';
 import FaqAccordion from '../../components/FaqAccordion.astro';
 import CtaSection from '../../components/CtaSection.astro';
+import RippleMotif from '../../components/RippleMotif.astro';
+import DryingMotif from '../../components/DryingMotif.astro';
+import CompareReveal from '../../components/CompareReveal.astro';
 import { site } from '../../config/site';
 import { servicesData, getService } from '../../data/services';
 
@@ -21,6 +24,17 @@ const breadcrumbItems = [
   { name: 'Leistungen', url: '/leistungen/' },
   { name: service.label, url: `/leistungen/${service.slug}/` },
 ];
+
+// Thematischer Akzent je Leistung (Wasserschaden/Leckage vs. Trocknung).
+// Wiederherstellung erhält stattdessen eine eigene Vorher/Nachher-Sektion.
+const motifMap: Record<string, 'ripple' | 'drying' | undefined> = {
+  leckageortung: 'ripple',
+  feuchtemessung: 'ripple',
+  bautrocknung: 'drying',
+  wasserschadensanierung: 'ripple',
+  schimmelbeseitigung: 'ripple',
+};
+const motif = motifMap[service.slug];
 ---
 <Base
   title={service.metaTitle}
@@ -47,12 +61,39 @@ const breadcrumbItems = [
             </Button>
           </div>
         </div>
-        <div class="split__media">
+        <div class="split__media service-media">
+          {motif === 'ripple' && (
+            <RippleMotif class="service-motif" data-parallax="0.08" />
+          )}
+          {motif === 'drying' && (
+            <DryingMotif class="service-motif service-motif--drying" data-parallax="0.08" />
+          )}
           <MediaPlaceholder file={service.image.file} alt={service.image.alt} />
         </div>
       </div>
     </div>
   </section>
+
+  {service.slug === 'wiederherstellung' && (
+    <section class="section section--alt">
+      <div class="container">
+        <div class="split">
+          <div class="reveal">
+            <span class="eyebrow">Zum Vergleich</span>
+            <h2>So verändert sich ein Raum.</h2>
+            <span class="measure-line"></span>
+            <p class="lead" style="margin-top:var(--space-5)">
+              Von der durchfeuchteten Wand bis zum wieder nutzbaren Raum. Bewegen
+              Sie den Regler, um den Unterschied zu sehen.
+            </p>
+          </div>
+          <div class="split__media reveal">
+            <CompareReveal />
+          </div>
+        </div>
+      </div>
+    </section>
+  )}
 
   <!-- Typische Situationen -->
   <section class="section section--alt">
@@ -198,5 +239,27 @@ const breadcrumbItems = [
   }
   .related__list li {
     max-width: none;
+  }
+
+  .service-media {
+    position: relative;
+  }
+  .service-motif {
+    position: absolute;
+    top: -28px;
+    right: -18px;
+    width: 130px;
+    height: 130px;
+    z-index: 0;
+    opacity: 0.8;
+    pointer-events: none;
+    color: var(--c-water-300);
+  }
+  .service-motif--drying {
+    color: var(--c-water-600);
+  }
+  .service-media :global(.media-ph) {
+    position: relative;
+    z-index: 1;
   }
 </style>
