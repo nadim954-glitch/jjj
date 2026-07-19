@@ -1,0 +1,135 @@
+---
+import Base from '../layouts/Base.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import MediaPlaceholder from '../components/MediaPlaceholder.astro';
+import { site } from '../config/site';
+
+const breadcrumbItems = [
+  { name: 'Start', url: '/' },
+  { name: 'Über uns', url: '/ueber-uns/' },
+];
+
+const prinzipien = [
+  { t: 'Persönliche Betreuung', d: 'Ein Ansprechpartner, der erreichbar bleibt.' },
+  { t: 'Klare Kommunikation', d: 'Wir erklären verständlich, was wir tun und warum.' },
+  { t: 'Strukturierter Ablauf', d: 'Jeder Schritt baut auf Messung und Abstimmung auf.' },
+  { t: 'Moderne Technik', d: 'Zeitgemäße Mess- und Trocknungstechnik für belastbare Ergebnisse.' },
+  { t: 'Sorgfältige Umsetzung', d: 'Sauber, geordnet und mit Blick auf Ihr Zuhause oder Objekt.' },
+  { t: 'Regionale Nähe', d: 'In Berlin und Umgebung schnell vor Ort. Rund um die Uhr erreichbar.' },
+];
+---
+<Base
+  title="Über uns – SANI Trocknung Berlin"
+  description="SANI Trocknung: inhabergeführter Ansprechpartner für Wasserschäden in Berlin. Persönlich, strukturiert, mit moderner Technik."
+  breadcrumb={breadcrumbItems}
+>
+  <Breadcrumb items={breadcrumbItems} />
+
+  <section class="section" style="padding-top:var(--space-5)">
+    <div class="container container--narrow">
+      <span class="eyebrow">Über uns</span>
+      <h1>SANI Trocknung: Ihr Ansprechpartner für Wasserschäden in Berlin.</h1>
+      <span class="measure-line"></span>
+      <p class="lead" style="margin-top:var(--space-5)">
+        Ein Wasserschaden bringt Unruhe – wir bringen Struktur. SANI Trocknung ist
+        ein inhabergeführtes Unternehmen aus Berlin, spezialisiert auf Wasser- und
+        Feuchtigkeitsschäden: von der Leckageortung über Trocknung und Sanierung
+        bis zur Wiederherstellung.
+      </p>
+    </div>
+  </section>
+
+  <!-- Ansprechpartner -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="split">
+        <div class="split__media">
+          <!-- [PH-10] Foto/Portrait Nadim Sawan (optional) -->
+          <MediaPlaceholder
+            file="ansprechpartner-sawan"
+            alt="Nadim Sawan, Geschäftsführer und Inhaber von SANI Trocknung"
+            ratio="1 / 1"
+          />
+        </div>
+        <div>
+          <span class="eyebrow">Ihr Ansprechpartner</span>
+          <h2>{site.owner}, {site.ownerRole}.</h2>
+          <span class="measure-line"></span>
+          <blockquote class="quote">
+            „Bei uns sprechen Sie nicht mit einer anonymen Hotline. Sie erreichen
+            einen Ansprechpartner, der Ihren Schadenfall kennt – von der ersten
+            Meldung bis zur Übergabe."
+          </blockquote>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Arbeitsweise -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Arbeitsweise</span>
+        <h2>So arbeiten wir.</h2>
+        <span class="measure-line"></span>
+      </div>
+      <div class="grid grid-3">
+        {prinzipien.map((p) => (
+          <article class="card">
+            <Icon name="check" size={26} class="card__icon" />
+            <h3 class="card__title">{p.t}</h3>
+            <p class="card__text">{p.d}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Aus einer Hand -->
+  <section class="section section--alt">
+    <div class="container container--narrow">
+      <span class="eyebrow">Aus einer Hand</span>
+      <h2>Möglichst alles aus einer Hand.</h2>
+      <span class="measure-line"></span>
+      <p class="lead" style="margin-top:var(--space-5)">
+        Von der Schadenanalyse bis zur Wiederherstellung decken wir die wichtigsten
+        Schritte selbst ab; ergänzende technische Gewerke koordinieren wir für Sie.
+      </p>
+      <p style="margin-top:var(--space-4)">
+        <a href="/leistungen/" class="link-arrow">Zu unseren Leistungen</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section section--deep">
+    <div class="container container--narrow" style="text-align:center">
+      <h2>Sie möchten mit uns arbeiten?</h2>
+      <p class="lead" style="margin-inline:auto">
+        Als Privatkunde, Hausverwaltung oder Unternehmen – sprechen Sie uns an.
+      </p>
+      <div class="btn-group btn-group--stack" style="justify-content:center;margin-top:var(--space-6)">
+        <Button href="/kontakt/" variant="primary" icon="mail">Kontakt aufnehmen</Button>
+        <Button href={`tel:${site.phoneLink}`} variant="secondary" icon="phone" phone>
+          Jetzt anrufen
+        </Button>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .quote {
+    margin: var(--space-5) 0 0;
+    padding-left: var(--space-5);
+    border-left: 3px solid var(--c-water-500);
+    font-family: var(--font-display);
+    font-size: var(--fs-lead);
+    font-weight: var(--fw-medium);
+    line-height: 1.5;
+    color: var(--color-text);
+    max-width: 52ch;
+  }
+</style>

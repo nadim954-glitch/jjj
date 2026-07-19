@@ -1,0 +1,83 @@
+---
+// Strukturierte Daten (JSON-LD). LocalBusiness sitewide;
+// optional zusätzliche Graphen (BreadcrumbList, FAQPage) je Seite.
+import { site } from '../config/site';
+
+interface Props {
+  breadcrumb?: { name: string; url: string }[];
+  faq?: { q: string; a: string }[];
+}
+const { breadcrumb, faq } = Astro.props;
+const base = site.baseUrl.replace(/\/$/, '');
+
+// Einsatzgebiete (Auswahl) – keine erfundenen Daten, entspricht Kap. 9.12.
+const areaServed = [
+  'Berlin',
+  'Potsdam',
+  'Falkensee',
+  'Hennigsdorf',
+  'Oranienburg',
+  'Bernau bei Berlin',
+  'Königs Wusterhausen',
+  'Teltow',
+  'Kleinmachnow',
+  'Werder (Havel)',
+].map((name) => ({ '@type': 'City', name }));
+
+// [PH-01] legalName · [PH-06] Logo/Bild noch offen – bewusst ohne image/aggregateRating.
+const localBusiness = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  '@id': base + '/#business',
+  name: site.legalName,
+  url: base + '/',
+  telephone: site.phoneLink,
+  email: site.email,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.address.street,
+    postalCode: site.address.zip,
+    addressLocality: site.address.city,
+    addressCountry: site.address.country,
+  },
+  areaServed,
+  founder: { '@type': 'Person', name: site.owner },
+  openingHoursSpecification: {
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    opens: '00:00',
+    closes: '23:59',
+  },
+};
+
+const graphs: unknown[] = [localBusiness];
+
+if (breadcrumb && breadcrumb.length) {
+  graphs.push({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: breadcrumb.map((b, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: b.name,
+      item: base + b.url,
+    })),
+  });
+}
+
+if (faq && faq.length) {
+  graphs.push({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: f.a.replace(/<[^>]+>/g, ''),
+      },
+    })),
+  });
+}
+---
+{graphs.map((g) => <script is:inline type="application/ld+json" set:html={JSON.stringify(g)} />)}

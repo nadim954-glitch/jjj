@@ -1,0 +1,15 @@
+---
+// Mobile Sticky-Aktionsleiste (<1024px). Auf /kontakt ab Formular ausgeblendet.
+import { site } from '../config/site';
+import Icon from './Icon.astro';
+---
+<div class="stickybar" data-stickybar aria-label="Schnellkontakt">
+  <a href={`tel:${site.phoneLink}`} class="stickybar__btn stickybar__btn--call btn-phone">
+    <Icon name="phone" size={20} />
+    <span>Anrufen</span>
+  </a>
+  <a href="/kontakt/#formular" class="stickybar__btn stickybar__btn--report">
+    <Icon name="drop" size={20} />
+    <span>Schaden melden</span>
+  </a>
+</div>

@@ -1,0 +1,40 @@
+---
+import Icon from './Icon.astro';
+interface Props {
+  href: string;
+  variant?: 'primary' | 'secondary';
+  icon?: string;
+  size?: 'md' | 'lg';
+  block?: boolean;
+  phone?: boolean;
+  external?: boolean;
+  class?: string;
+  'aria-label'?: string;
+}
+const {
+  href,
+  variant = 'primary',
+  icon,
+  size = 'md',
+  block = false,
+  phone = false,
+  external = false,
+  class: className = '',
+  ...rest
+} = Astro.props;
+const cls = [
+  'btn',
+  variant === 'primary' ? 'btn-primary' : 'btn-secondary',
+  size === 'lg' ? 'btn-lg' : '',
+  block ? 'btn-block' : '',
+  phone ? 'btn-phone' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+const extAttrs = external ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+---
+<a href={href} class={cls} {...extAttrs} {...rest}>
+  {icon && <Icon name={icon} />}
+  <span><slot /></span>
+</a>

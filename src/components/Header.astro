@@ -1,0 +1,86 @@
+---
+import { site } from '../config/site';
+import { mainNav } from '../data/nav';
+import Icon from './Icon.astro';
+const path = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === '/' ? path === '/' : path.startsWith(href);
+---
+<header class="site-header" id="site-header" data-header>
+  <div class="container container--wide site-header__inner">
+    <a href="/" class="brand" aria-label={`${site.brand} – zur Startseite`}>
+      <!-- [PH-06] Logo-Datei (SVG). Bis dahin Wortmarke. -->
+      <span class="brand__mark" aria-hidden="true">
+        <Icon name="drop" size={26} />
+      </span>
+      <span class="brand__name">{site.brand}</span>
+    </a>
+
+    <nav class="site-nav" aria-label="Hauptnavigation">
+      <ul class="site-nav__list">
+        {
+          mainNav.map((item) =>
+            'children' in item && item.children ? (
+              <li class="site-nav__item has-dropdown" data-dropdown>
+                <button
+                  type="button"
+                  class="site-nav__link site-nav__toggle"
+                  aria-expanded="false"
+                  aria-haspopup="true"
+                  data-dropdown-toggle
+                  aria-current={isActive(item.href) ? 'page' : undefined}
+                >
+                  {item.label}
+                  <Icon name="chevron" size={16} class="site-nav__chevron" />
+                </button>
+                <ul class="dropdown" data-dropdown-menu>
+                  {item.children.map((c) => (
+                    <li>
+                      <a
+                        href={c.href}
+                        class="dropdown__link"
+                        aria-current={path === c.href ? 'page' : undefined}
+                      >
+                        {c.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ) : (
+              <li class="site-nav__item">
+                <a
+                  href={item.href}
+                  class="site-nav__link"
+                  aria-current={isActive(item.href) ? 'page' : undefined}
+                >
+                  {item.label}
+                </a>
+              </li>
+            )
+          )
+        }
+      </ul>
+    </nav>
+
+    <div class="site-header__actions">
+      <a href={`tel:${site.phoneLink}`} class="header-phone btn-phone" data-call>
+        <Icon name="phone" size={18} />
+        <span class="header-phone__text">
+          <span class="header-phone__label">24/7</span>
+          <span class="header-phone__num tabular">{site.phoneDisplay}</span>
+        </span>
+      </a>
+      <a href="/kontakt/#formular" class="btn btn-primary header-cta">Wasserschaden melden</a>
+      <button
+        type="button"
+        class="burger"
+        data-menu-open
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+      >
+        <Icon name="menu" size={26} title="Menü öffnen" />
+      </button>
+    </div>
+  </div>
+</header>

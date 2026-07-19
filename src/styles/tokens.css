@@ -1,0 +1,138 @@
+/* ==========================================================================
+   SANI Trocknung – Design-Tokens
+   Designrichtung: „Tiefenwasser Editorial"
+   Tiefblau als Ankerfläche · warmes, ruhiges Hell für Inhalt ·
+   ein kontrolliertes Wasserblau als Akzent (Messlinie, CTA, Icon).
+   Alle Kontraste WCAG 2.1 AA geprüft (siehe Kommentare).
+   ========================================================================== */
+
+:root {
+  /* --- Basis-Farbwerte --------------------------------------------------- */
+  /* Tiefblau (Ankerflächen) */
+  --c-navy-950: #06121f;
+  --c-navy-900: #0a2033;
+  --c-navy-800: #123049;
+  --c-navy-700: #1b4a6e;
+
+  /* Wasserblau (Akzent) */
+  --c-water-700: #0f6690;
+  --c-water-600: #1b8fc6;
+  --c-water-500: #2fa8dc;
+  --c-water-300: #7ccdeb;
+  --c-water-100: #d9eff9;
+  --c-water-050: #eef7fc;
+
+  /* Neutrale (ruhiges, leicht kühles Papier) */
+  --c-white: #ffffff;
+  --c-paper: #f7f9fb; /* sehr helle Inhaltsfläche */
+  --c-stone-100: #eef2f6;
+  --c-stone-200: #dde5ec;
+  --c-stone-300: #c6d1db;
+  --c-stone-400: #9aabb8;
+
+  /* Tinte (Text) */
+  --c-ink-900: #14202b; /* ~13:1 auf Weiß */
+  --c-ink-700: #33444f;
+  --c-ink-500: #506271; /* ~7:1 auf Weiß */
+
+  /* Statusfarben */
+  --c-success: #1e7f4f;
+  --c-success-bg: #e7f5ee;
+  --c-error: #b3261e;
+  --c-error-bg: #fbedec;
+  --c-warn: #8a6100;
+  --c-warn-bg: #fff6e0;
+
+  /* --- Semantische Rollen ------------------------------------------------ */
+  --color-primary: var(--c-navy-900);
+  --color-secondary: var(--c-navy-700);
+  --color-accent: var(--c-water-500); /* Messlinie, Fläche, Icon (nie Text auf Weiß) */
+
+  --color-bg: var(--c-white);
+  --color-bg-alt: var(--c-paper);
+  --color-bg-dark: var(--c-navy-900);
+  --color-bg-deep: var(--c-navy-950);
+
+  --color-text: var(--c-ink-900);
+  --color-text-soft: var(--c-ink-500);
+  --color-text-inverse: var(--c-white);
+  --color-text-inverse-soft: #c4d6e4; /* ~7:1 auf Navy-900 */
+
+  --color-link: var(--c-water-700); /* ≥5:1 auf Weiß */
+  --color-link-hover: var(--c-navy-800);
+  --color-link-dark: var(--c-water-300); /* Links auf dunkel */
+
+  --color-border: var(--c-stone-200);
+  --color-border-strong: var(--c-stone-300);
+  --color-focus: var(--c-water-600);
+  --color-focus-dark: var(--c-water-300);
+
+  --color-cta: var(--c-water-500);
+  --color-cta-text: var(--c-navy-950); /* ≥8:1 auf Water-500 */
+  --color-cta-hover: #158fc9;
+
+  /* --- Typografie -------------------------------------------------------- */
+  /* Hochwertiger System-Font-Stack (keine externen Schriften).
+     [PH-06/Produktion] Optional lokale WOFF2 (Manrope/Inter) einbinden –
+     @font-face liegt in base.css vorbereitet und auskommentiert. */
+  --font-fallback: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-display: 'Manrope', var(--font-fallback);
+  --font-body: 'Inter', var(--font-fallback);
+
+  --fs-h1: clamp(2rem, 4.2vw + 1rem, 3.25rem);
+  --fs-h2: clamp(1.5rem, 2.1vw + 0.9rem, 2.15rem);
+  --fs-h3: clamp(1.2rem, 1vw + 0.9rem, 1.45rem);
+  --fs-lead: clamp(1.06rem, 0.5vw + 0.95rem, 1.22rem);
+  --fs-body: 1rem;
+  --fs-small: 0.875rem;
+  --fs-eyebrow: 0.78rem;
+
+  --lh-tight: 1.14;
+  --lh-heading: 1.24;
+  --lh-body: 1.65;
+  --ls-eyebrow: 0.16em;
+  --ls-tight: -0.015em;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-heavy: 800;
+
+  /* --- Layout / Abstände ------------------------------------------------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+
+  --container-max: 1180px;
+  --container-narrow: 760px;
+  --container-wide: 1320px;
+  --container-pad: clamp(1.15rem, 4vw, 2rem);
+
+  --radius-s: 6px;
+  --radius-m: 12px;
+  --radius-l: 18px;
+  --radius-pill: 999px;
+
+  /* Schatten sparsam, weich, tiefblau getönt */
+  --shadow-s: 0 1px 2px rgba(6, 18, 31, 0.05), 0 2px 6px rgba(6, 18, 31, 0.05);
+  --shadow-m: 0 6px 20px rgba(6, 18, 31, 0.09);
+  --shadow-l: 0 18px 48px rgba(6, 18, 31, 0.16);
+
+  --line: 1px solid var(--color-border);
+
+  --transition-fast: 160ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 260ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 480ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  --header-h: 76px;
+  --header-h-compact: 60px;
+  --stickybar-h: 62px;
+}

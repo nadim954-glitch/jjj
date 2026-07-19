@@ -1,0 +1,84 @@
+---
+import Base from '../layouts/Base.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../config/site';
+
+const breadcrumbItems = [
+  { name: 'Start', url: '/' },
+  { name: 'Impressum', url: '/impressum/' },
+];
+---
+<Base
+  title="Impressum | SANI Trocknung"
+  description="Impressum der SANI Trocknung."
+  breadcrumb={breadcrumbItems}
+>
+  <Breadcrumb items={breadcrumbItems} />
+
+  <section class="section" style="padding-top:var(--space-5)">
+    <div class="container container--narrow prose">
+      <span class="eyebrow">Rechtliches</span>
+      <h1>Impressum</h1>
+      <span class="measure-line"></span>
+
+      <div class="draft-note" role="note" style="margin-top:var(--space-5)">
+        <Icon name="warn" size={20} />
+        <div>
+          <strong>Entwurf – vor Veröffentlichung durch fachkundige Stelle prüfen.</strong>
+          Die folgenden Angaben enthalten Platzhalter ([PH-01/02/03/05]) und sind
+          keine Rechtsberatung.
+        </div>
+      </div>
+
+      <h2>Angaben gemäß § 5 DDG</h2>
+      <p>
+        <!-- [PH-01] Exakte Firmierung laut Handelsregister -->
+        {site.legalName}<br />
+        {site.address.street}<br />
+        {site.address.zip} {site.address.city}
+      </p>
+
+      <h2>Vertreten durch</h2>
+      <p>{site.owner}, Geschäftsführer</p>
+
+      <h2>Kontakt</h2>
+      <p>
+        Telefon: <a href={`tel:${site.phoneLink}`} class="tabular">{site.phoneDisplay}</a><br />
+        E-Mail: <a href={`mailto:${site.email}`}>{site.email}</a>
+      </p>
+
+      <h2>Registereintrag</h2>
+      <p>
+        <!-- [PH-02] Registergericht + HRB -->
+        <mark class="ph">[PH-02] Registergericht und Handelsregisternummer eintragen</mark>
+      </p>
+
+      <h2>Umsatzsteuer-ID</h2>
+      <p>
+        <!-- [PH-03] USt-IdNr., falls vorhanden -->
+        <mark class="ph">[PH-03] Umsatzsteuer-Identifikationsnummer eintragen (falls vorhanden)</mark>
+      </p>
+
+      <h2>Verantwortlich für den Inhalt</h2>
+      <p>{site.owner}, Anschrift wie oben</p>
+
+      <h2>Verbraucherstreitbeilegung / EU-Streitschlichtung</h2>
+      <p>
+        <mark class="ph">[vor Veröffentlichung prüfen]</mark> Angaben zur
+        Verbraucherstreitbeilegung und zur EU-Streitschlichtungsplattform (OS) nach
+        aktueller Rechtslage durch eine fachkundige Stelle ergänzen lassen.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .ph {
+    background: var(--c-warn-bg);
+    color: var(--c-warn);
+    padding: 0.1em 0.4em;
+    border-radius: var(--radius-s);
+    font-size: 0.92em;
+  }
+</style>

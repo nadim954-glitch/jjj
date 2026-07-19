@@ -1,0 +1,62 @@
+---
+import Base from '../layouts/Base.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import FaqAccordion from '../components/FaqAccordion.astro';
+import CtaSection from '../components/CtaSection.astro';
+import { faqGroups } from '../data/faq';
+
+const breadcrumbItems = [
+  { name: 'Start', url: '/' },
+  { name: 'FAQ', url: '/faq/' },
+];
+
+// Alle FAQ-Einträge für FAQPage-Schema (nur auf /faq/, Kap. 15).
+const allFaqs = faqGroups.flatMap((g) => g.items);
+---
+<Base
+  title="Wasserschaden FAQ – Antworten | SANI Trocknung"
+  description="Was tun beim Wasserschaden? Antworten auf die wichtigsten Fragen zu Ablauf, Dauer, Leckageortung und Versicherung."
+  breadcrumb={breadcrumbItems}
+  faq={allFaqs}
+>
+  <Breadcrumb items={breadcrumbItems} />
+
+  <section class="section" style="padding-top:var(--space-5)">
+    <div class="container container--narrow">
+      <span class="eyebrow">FAQ</span>
+      <h1>Häufige Fragen zum Wasserschaden.</h1>
+      <span class="measure-line"></span>
+      <p class="lead" style="margin-top:var(--space-5)">
+        Hier finden Sie Antworten auf die Fragen, die uns am häufigsten erreichen.
+        Ihre Frage ist nicht dabei? Rufen Sie an – wir helfen weiter.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="container container--narrow">
+      {
+        faqGroups.map((group, gi) => (
+          <div class="faq-group">
+            <h2 class="faq-group__title">{group.title}</h2>
+            <span class="measure-line"></span>
+            <div style="margin-top:var(--space-4)">
+              <FaqAccordion items={group.items} idPrefix={`faq-g${gi}`} />
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <CtaSection title="Ihre Frage war nicht dabei?" reportLabel="Kontakt aufnehmen" />
+</Base>
+
+<style>
+  .faq-group + .faq-group {
+    margin-top: var(--space-8);
+  }
+  .faq-group__title {
+    margin-bottom: var(--space-2);
+  }
+</style>

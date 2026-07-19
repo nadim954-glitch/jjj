@@ -1,0 +1,113 @@
+---
+import Base from '../layouts/Base.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import AreaMap from '../components/AreaMap.astro';
+import CtaSection from '../components/CtaSection.astro';
+
+const breadcrumbItems = [
+  { name: 'Start', url: '/' },
+  { name: 'Einsatzgebiete', url: '/einsatzgebiete/' },
+];
+
+const berlin = [
+  { dir: 'Mitte und Innenstadt', orte: ['Berlin-Mitte', 'Moabit', 'Wedding', 'Tiergarten', 'Gesundbrunnen', 'Hansaviertel'] },
+  { dir: 'Osten', orte: ['Friedrichshain', 'Kreuzberg', 'Treptow', 'Köpenick', 'Adlershof', 'Friedrichshagen', 'Grünau', 'Marzahn', 'Hellersdorf', 'Biesdorf', 'Kaulsdorf', 'Mahlsdorf'] },
+  { dir: 'Norden', orte: ['Pankow', 'Prenzlauer Berg', 'Weißensee', 'Reinickendorf', 'Tegel', 'Wittenau', 'Hermsdorf', 'Frohnau', 'Heiligensee'] },
+  { dir: 'Westen', orte: ['Charlottenburg', 'Wilmersdorf', 'Grunewald', 'Schmargendorf', 'Westend', 'Spandau', 'Falkenhagener Feld', 'Hakenfelde', 'Staaken', 'Wilhelmstadt'] },
+  { dir: 'Süden', orte: ['Steglitz', 'Zehlendorf', 'Lichterfelde', 'Dahlem', 'Lankwitz', 'Tempelhof', 'Schöneberg', 'Mariendorf', 'Friedenau', 'Lichtenrade', 'Neukölln', 'Britz', 'Buckow', 'Rudow', 'Gropiusstadt'] },
+];
+
+const umland = ['Potsdam', 'Falkensee', 'Dallgow-Döberitz', 'Brieselang', 'Hennigsdorf', 'Hohen Neuendorf', 'Birkenwerder', 'Oranienburg', 'Glienicke/Nordbahn', 'Mühlenbecker Land', 'Panketal', 'Bernau bei Berlin', 'Ahrensfelde', 'Hoppegarten', 'Neuenhagen bei Berlin', 'Fredersdorf-Vogelsdorf', 'Schöneiche bei Berlin', 'Erkner', 'Woltersdorf', 'Königs Wusterhausen', 'Ludwigsfelde', 'Fürstenwalde', 'Blankenfelde-Mahlow', 'Teltow', 'Kleinmachnow', 'Stahnsdorf', 'Werder an der Havel'];
+---
+<Base
+  title="Einsatzgebiete – Berlin & Umland | SANI Trocknung"
+  description="Wir sind in allen Berliner Bezirken und im näheren Umland im Einsatz – von Spandau bis Köpenick, von Potsdam bis Bernau."
+  breadcrumb={breadcrumbItems}
+>
+  <Breadcrumb items={breadcrumbItems} />
+
+  <section class="section" style="padding-top:var(--space-5)">
+    <div class="container">
+      <div class="split">
+        <div>
+          <span class="eyebrow">Einsatzgebiete</span>
+          <h1>Unsere Einsatzgebiete: Berlin und das nähere Umland.</h1>
+          <span class="measure-line"></span>
+          <p class="lead" style="margin-top:var(--space-5)">
+            Bei einem Wasserschaden zählt Nähe. Wir sind in allen Berliner Bezirken
+            und in vielen Gemeinden des näheren Umlands im Einsatz – rund um die Uhr
+            erreichbar.
+          </p>
+        </div>
+        <div class="split__media">
+          <AreaMap />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Berlin -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Berlin</span>
+        <h2>In der ganzen Stadt für Sie unterwegs</h2>
+        <span class="measure-line"></span>
+        <p class="text-soft" style="margin-top:var(--space-4)">Unter anderem in:</p>
+      </div>
+      <div class="grid grid-2">
+        {berlin.map((b) => (
+          <div class="area-block">
+            <h3>{b.dir}</h3>
+            <p class="area-list">{b.orte.join(' · ')}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Umland -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Berliner Umland</span>
+        <h2>Auch außerhalb der Stadtgrenze</h2>
+        <span class="measure-line"></span>
+        <p class="text-soft" style="margin-top:var(--space-4)">Unter anderem in:</p>
+      </div>
+      <p class="area-list area-list--wide">{umland.join(' · ')}</p>
+
+      <div class="notice" style="margin-top:var(--space-6)">
+        <p>
+          Ihr Ort ist nicht aufgeführt? Rufen Sie uns an – in vielen Fällen können
+          wir trotzdem helfen oder Ihnen weiterhelfen.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <CtaSection title="Wasserschaden in Ihrer Nähe?" />
+</Base>
+
+<style>
+  .area-block h3 {
+    font-size: 1.05rem;
+    margin-bottom: var(--space-2);
+  }
+  .area-list {
+    color: var(--color-text-soft);
+    line-height: 1.9;
+    max-width: none;
+  }
+  @media (min-width: 720px) {
+    .area-list--wide {
+      columns: 2;
+      column-gap: var(--space-7);
+    }
+  }
+  @media (min-width: 1024px) {
+    .area-list--wide {
+      columns: 3;
+    }
+  }
+</style>

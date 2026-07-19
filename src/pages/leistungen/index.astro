@@ -1,0 +1,136 @@
+---
+import Base from '../../layouts/Base.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import ServiceCard from '../../components/ServiceCard.astro';
+import CtaSection from '../../components/CtaSection.astro';
+import { servicesData } from '../../data/services';
+
+const breadcrumbItems = [
+  { name: 'Start', url: '/' },
+  { name: 'Leistungen', url: '/leistungen/' },
+];
+
+const groups = [
+  {
+    n: 1,
+    title: 'Leckageortung und Schadenanalyse',
+    text: 'Bevor wir handeln, verstehen wir den Schaden: Leckageortung, Feuchtemessung, Schadenaufnahme und technische Dokumentation schaffen die Grundlage für jede weitere Entscheidung.',
+    slugs: ['leckageortung', 'feuchtemessung'],
+  },
+  {
+    n: 2,
+    title: 'Trocknung und Sanierung',
+    text: 'Technische Trocknung, Bautrocknung, Wasserschadensanierung und Schimmelsanierung: Wir beseitigen Feuchtigkeit kontrolliert und sanieren betroffene Bereiche fachgerecht.',
+    slugs: ['bautrocknung', 'wasserschadensanierung', 'schimmelbeseitigung'],
+  },
+  {
+    n: 3,
+    title: 'Demontage, Rückbau und Abriss',
+    text: 'Wenn Materialien nicht zu retten sind: Demontage-, Rückbau-, Abriss- und Entkernungsarbeiten – kontrolliert, sauber und als Vorbereitung für Trocknung und Wiederherstellung.',
+    slugs: ['rueckbau-abriss'],
+  },
+  {
+    n: 4,
+    title: 'Wiederherstellung',
+    text: 'Trockenbau, Putz, Maler, Boden, Estrich, Fliesen, Tischlerarbeiten und mehr: Wir bringen Ihre Räume zurück in den nutzbaren Zustand.',
+    slugs: ['wiederherstellung'],
+  },
+  {
+    n: 5,
+    title: 'Technische Gewerke und Koordination',
+    text: 'Elektro-, Sanitär-, Klempner-, Heizungs- und Installationsarbeiten binden wir als koordinierte Fachgewerke ein und stimmen alle Sanierungs- und Wiederherstellungsschritte aufeinander ab – damit Sie nur einen Ansprechpartner brauchen.',
+    slugs: [],
+  },
+];
+
+const byslug = (slug: string) => servicesData.find((s) => s.slug === slug)!;
+---
+<Base
+  title="Leistungen – Trocknung & Sanierung | SANI Trocknung"
+  description="Alle Leistungen aus einer Hand: Leckageortung, Bautrocknung, Wasserschadensanierung, Rückbau und Wiederherstellung in Berlin und Umland."
+  breadcrumb={breadcrumbItems}
+>
+  <Breadcrumb items={breadcrumbItems} />
+
+  <section class="section" style="padding-top:var(--space-5)">
+    <div class="container container--narrow">
+      <span class="eyebrow">Leistungsübersicht</span>
+      <h1>Unsere Leistungen: von der Ortung bis zur Wiederherstellung.</h1>
+      <span class="measure-line"></span>
+      <p class="lead" style="margin-top:var(--space-5)">
+        Ein Wasserschaden besteht selten aus einer einzigen Aufgabe. Deshalb
+        bündeln wir alle wichtigen Schritte in fünf klaren Leistungsgruppen –
+        ausgeführt durch unser Team oder als koordinierte Fachgewerke, abgestimmt
+        auf Ihr Schadenbild.
+      </p>
+    </div>
+  </section>
+
+  {
+    groups.map((g, i) => (
+      <section class={`section ${i % 2 === 1 ? 'section--alt' : ''}`} style="padding-top:var(--space-6)">
+        <div class="container">
+          <div class="group-head">
+            <span class="group-num tabular">{String(g.n).padStart(2, '0')}</span>
+            <div>
+              <h2>{g.title}</h2>
+              <span class="measure-line"></span>
+              <p class="text-soft" style="margin-top:var(--space-4);max-width:62ch">{g.text}</p>
+            </div>
+          </div>
+          {g.slugs.length > 0 && (
+            <div class="grid grid-3" style="margin-top:var(--space-6)">
+              {g.slugs.map((slug) => {
+                const s = byslug(slug);
+                return <ServiceCard slug={s.slug} label={s.label} text={s.cardText} icon={s.icon} />;
+              })}
+            </div>
+          )}
+        </div>
+      </section>
+    ))
+  }
+
+  <section class="section">
+    <div class="container">
+      <div class="notice">
+        <p>
+          Der konkrete Leistungsumfang richtet sich immer nach Schadenbild, Objekt
+          und Auftrag. Leistungen, die nicht durch eigenes Personal ausgeführt
+          werden, übernehmen von uns koordinierte Fachgewerke.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <CtaSection
+    title="Unsicher, welche Leistung Sie brauchen?"
+    text="Schildern Sie uns kurz die Situation – wir beraten Sie und stimmen die passenden Schritte mit Ihnen ab."
+    reportLabel="Anfrage senden"
+  />
+</Base>
+
+<style>
+  .group-head {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-4);
+    align-items: start;
+  }
+  .group-num {
+    font-family: var(--font-display);
+    font-weight: var(--fw-heavy);
+    font-size: 2rem;
+    line-height: 1;
+    color: var(--c-water-600);
+    padding-top: 0.15em;
+  }
+  @media (min-width: 720px) {
+    .group-head {
+      gap: var(--space-6);
+    }
+    .group-num {
+      font-size: 2.75rem;
+    }
+  }
+</style>

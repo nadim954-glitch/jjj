@@ -1,0 +1,252 @@
+---
+import Base from '../layouts/Base.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../config/site';
+
+const breadcrumbItems = [
+  { name: 'Start', url: '/' },
+  { name: 'Kontakt', url: '/kontakt/' },
+];
+
+const schadensarten = [
+  'Akuter Wasserschaden',
+  'Verdacht auf Leckage',
+  'Feuchtigkeit oder Schimmel',
+  'Trocknung angefragt',
+  'Wiederherstellung',
+  'Sonstiges',
+];
+const kontaktarten = ['Telefon', 'E-Mail', 'WhatsApp'];
+---
+<Base
+  title="Kontakt – Wasserschaden melden | SANI Trocknung"
+  description="Wasserschaden melden: 24/7 telefonisch erreichbar oder per Formular. SANI Trocknung, Ulmenstraße 6a, 13467 Berlin."
+  breadcrumb={breadcrumbItems}
+>
+  <Breadcrumb items={breadcrumbItems} />
+
+  <section class="section" style="padding-top:var(--space-5)">
+    <div class="container container--narrow">
+      <span class="eyebrow">Kontakt</span>
+      <h1>Kontakt: Melden Sie Ihren Wasserschaden.</h1>
+      <span class="measure-line"></span>
+      <p class="lead" style="margin-top:var(--space-5)">
+        Rund um die Uhr erreichbar – telefonisch, per WhatsApp oder über das
+        Formular. Wir melden uns schnellstmöglich zurück.
+      </p>
+    </div>
+  </section>
+
+  <!-- Notfallblock -->
+  <section class="section" style="padding-top:0">
+    <div class="container container--narrow">
+      <div class="emergency on-dark">
+        <div>
+          <span class="emergency__label">24/7-Notdienst</span>
+          <a href={`tel:${site.phoneLink}`} class="emergency__num tabular">{site.phoneDisplay}</a>
+        </div>
+        <div class="emergency__actions">
+          <a href={`tel:${site.phoneLink}`} class="btn btn-primary"><Icon name="phone" size={18} />Anrufen</a>
+          <a
+            href={`https://wa.me/${site.whatsapp}`}
+            class="btn btn-secondary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Icon name="whatsapp" size={18} />WhatsApp öffnen
+            <span class="sr-only">(öffnet in neuem Tab)</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Formular -->
+  <section class="section section--alt" id="formular" style="scroll-margin-top:90px">
+    <div class="container container--narrow">
+      <div class="section-head">
+        <span class="eyebrow">Anfrage</span>
+        <h2>Wasserschaden melden oder Anfrage senden</h2>
+        <span class="measure-line"></span>
+      </div>
+
+      {
+        !site.features.formLive && (
+          <div class="draft-note" role="note">
+            <Icon name="warn" size={20} />
+            <div>
+              <strong>Hinweis (PH-08):</strong> Der Formularversand ist noch nicht
+              produktiv aktiviert. Er wird nach Klärung des Hostings und des
+              Endpunkts scharf geschaltet. Bitte melden Sie akute Schäden bis dahin
+              telefonisch.
+            </div>
+          </div>
+        )
+      }
+
+      <!-- Erfolgspanel (per JS eingeblendet) -->
+      <div class="form-panel form-panel--success" data-success-panel role="status" hidden>
+        <h3>Vielen Dank – Ihre Anfrage ist bei uns eingegangen.</h3>
+        <p>
+          Wir melden uns schnellstmöglich bei Ihnen. Bei einem akuten Notfall
+          erreichen Sie uns jederzeit unter
+          <a href={`tel:${site.phoneLink}`} class="tabular">{site.phoneDisplay}</a>.
+        </p>
+      </div>
+
+      <form
+        class="contact-form"
+        method="post"
+        action={site.formEndpoint}
+        novalidate
+        data-contact-form
+      >
+        <!-- Fehlerzusammenfassung -->
+        <div class="form-summary form-summary--error" data-form-summary role="alert" tabindex="-1" hidden></div>
+
+        <!-- Honeypot + Zeitfalle (Spam-Schutz, serverseitig geprüft) -->
+        <div class="hp-field" aria-hidden="true">
+          <label>Bitte dieses Feld frei lassen
+            <input type="text" name="website" tabindex="-1" autocomplete="off" />
+          </label>
+        </div>
+        <input type="hidden" name="ts" value="" data-timestamp />
+
+        <div class="form-grid form-grid--2">
+          <div class="form-field">
+            <label for="vorname">Vorname <span class="req" aria-hidden="true">*</span> <span class="sr-only">(Pflichtfeld)</span></label>
+            <input class="input" type="text" id="vorname" name="vorname" autocomplete="given-name" required maxlength="60" aria-describedby="err-vorname" />
+            <span class="field-error" id="err-vorname"><Icon name="warn" size={14} /></span>
+          </div>
+          <div class="form-field">
+            <label for="nachname">Nachname <span class="req" aria-hidden="true">*</span> <span class="sr-only">(Pflichtfeld)</span></label>
+            <input class="input" type="text" id="nachname" name="nachname" autocomplete="family-name" required maxlength="60" aria-describedby="err-nachname" />
+            <span class="field-error" id="err-nachname"><Icon name="warn" size={14} /></span>
+          </div>
+        </div>
+
+        <div class="notice" style="margin-bottom:var(--space-4)">
+          <p>Bitte geben Sie mindestens Telefonnummer oder E-Mail an.</p>
+        </div>
+
+        <div class="form-grid form-grid--2">
+          <div class="form-field">
+            <label for="telefon">Telefonnummer</label>
+            <input class="input" type="tel" id="telefon" name="telefon" autocomplete="tel" maxlength="20" aria-describedby="hint-telefon err-telefon" />
+            <span class="hint" id="hint-telefon">Für schnelle Rückfragen.</span>
+            <span class="field-error" id="err-telefon"><Icon name="warn" size={14} /></span>
+          </div>
+          <div class="form-field">
+            <label for="email">E-Mail-Adresse</label>
+            <input class="input" type="email" id="email" name="email" autocomplete="email" maxlength="120" aria-describedby="err-email" />
+            <span class="field-error" id="err-email"><Icon name="warn" size={14} /></span>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="adresse">Adresse oder Schadenort</label>
+          <input class="input" type="text" id="adresse" name="adresse" autocomplete="street-address" maxlength="160" aria-describedby="hint-adresse" />
+          <span class="hint" id="hint-adresse">Straße und Ort genügen.</span>
+        </div>
+
+        <div class="form-field">
+          <label for="schadensart">Art des Schadens <span class="req" aria-hidden="true">*</span> <span class="sr-only">(Pflichtfeld)</span></label>
+          <select class="select" id="schadensart" name="schadensart" required aria-describedby="err-schadensart">
+            <option value="">Bitte auswählen …</option>
+            {schadensarten.map((a) => (<option value={a}>{a}</option>))}
+          </select>
+          <span class="field-error" id="err-schadensart"><Icon name="warn" size={14} /></span>
+          <p class="notice notice--warn" data-acute-hint hidden style="margin-top:var(--space-3)">
+            Akuter Notfall? Am schnellsten erreichen Sie uns telefonisch:
+            <a href={`tel:${site.phoneLink}`} class="tabular">{site.phoneDisplay}</a>.
+          </p>
+        </div>
+
+        <div class="form-field">
+          <label for="nachricht">Ihre Nachricht</label>
+          <textarea class="textarea" id="nachricht" name="nachricht" maxlength="2000" aria-describedby="hint-nachricht"></textarea>
+          <span class="hint" id="hint-nachricht">Beschreiben Sie kurz, was passiert ist.</span>
+        </div>
+
+        <div class="form-field">
+          <label for="kontaktart">Gewünschte Kontaktart</label>
+          <select class="select" id="kontaktart" name="kontaktart">
+            <option value="">Keine Angabe</option>
+            {kontaktarten.map((k) => (<option value={k}>{k}</option>))}
+          </select>
+        </div>
+
+        <div class="checkbox-field">
+          <input type="checkbox" id="datenschutz" name="datenschutz" required aria-describedby="err-datenschutz" />
+          <label for="datenschutz">
+            Ich habe die <a href="/datenschutz/">Datenschutzerklärung</a> gelesen und
+            bin mit der Verarbeitung meiner Angaben zur Bearbeitung meiner Anfrage
+            einverstanden. <span class="req" aria-hidden="true">*</span>
+            <span class="field-error" id="err-datenschutz" style="margin-top:var(--space-1)"><Icon name="warn" size={14} /></span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg" data-submit>Anfrage senden</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- So erreichen Sie uns -->
+  <section class="section">
+    <div class="container container--narrow">
+      <div class="section-head">
+        <span class="eyebrow">So erreichen Sie uns</span>
+        <h2>SANI Trocknung</h2>
+        <span class="measure-line"></span>
+      </div>
+      <!-- [PH-01] Exakte Firmierung vor Veröffentlichung prüfen -->
+      <address class="contact-details">
+        <p><strong>{site.legalName}</strong></p>
+        <p>{site.address.street} · {site.address.zip} {site.address.city}</p>
+        <p>
+          <Icon name="phone" size={16} style="display:inline;vertical-align:-3px" />
+          <a href={`tel:${site.phoneLink}`} class="tabular">{site.phoneDisplay}</a>
+        </p>
+        <p>
+          <Icon name="mail" size={16} style="display:inline;vertical-align:-3px" />
+          <a href={`mailto:${site.email}`}>{site.email}</a>
+        </p>
+        <p><Icon name="clock" size={16} style="display:inline;vertical-align:-3px" /> Erreichbarkeit: 24 Stunden, 7 Tage die Woche.</p>
+      </address>
+      <p class="text-soft" style="font-size:var(--fs-small);margin-top:var(--space-4)">
+        Anfahrt nach Absprache. Keine externe Karteneinbindung – aus Datenschutzgründen.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<script is:inline>
+  // Zeitstempel für die serverseitige Zeitfalle (Spam-Schutz).
+  document.querySelectorAll('[data-timestamp]').forEach(function (el) {
+    el.value = String(Date.now());
+  });
+  // Akut-Hinweis bei Auswahl „Akuter Wasserschaden".
+  var art = document.getElementById('schadensart');
+  var hint = document.querySelector('[data-acute-hint]');
+  if (art && hint) {
+    art.addEventListener('change', function () {
+      hint.hidden = art.value !== 'Akuter Wasserschaden';
+    });
+  }
+</script>
+
+<style>
+  .emergency__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-left: auto;
+  }
+  .contact-details p {
+    margin-bottom: var(--space-2);
+  }
+  .contact-details a {
+    color: var(--color-link);
+  }
+</style>

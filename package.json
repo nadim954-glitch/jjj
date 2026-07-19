@@ -1,0 +1,23 @@
+{
+  "name": "sani-trocknung",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Unternehmenswebsite SANI Trocknung – Wasserschadensanierung Berlin (Astro, statisch)",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.3.0",
+    "astro": "^5.6.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "playwright": "^1.61.1",
+    "typescript": "^5.9.3"
+  }
+}

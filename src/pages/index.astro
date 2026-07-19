@@ -1,0 +1,283 @@
+---
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import ServiceCard from '../components/ServiceCard.astro';
+import MediaPlaceholder from '../components/MediaPlaceholder.astro';
+import FaqAccordion from '../components/FaqAccordion.astro';
+import CtaSection from '../components/CtaSection.astro';
+import AreaMap from '../components/AreaMap.astro';
+import { site } from '../config/site';
+import { servicesData } from '../data/services';
+import { faqPreview } from '../data/faq';
+
+const trust = ['Berlin & Umland', '24/7-Notdienst', 'Moderne Messtechnik', 'Alles aus einer Hand'];
+
+const soforthilfe = [
+  { t: 'Schaden melden', d: 'Rufen Sie an oder senden Sie uns Ihre Anfrage. Wir sind rund um die Uhr erreichbar.' },
+  { t: 'Ursache lokalisieren', d: 'Mit moderner Messtechnik grenzen wir die Ursache möglichst zerstörungsarm ein.' },
+  { t: 'Wasser und Feuchtigkeit beseitigen', d: 'Wir sichern die betroffenen Bereiche und leiten die passenden Maßnahmen ein.' },
+  { t: 'Trocknung und Sanierung durchführen', d: 'Technische Trocknung und Sanierung, abgestimmt auf das Schadenbild.' },
+  { t: 'Räume wiederherstellen', d: 'Vom Rückbau bis zur Wiederherstellung – bis Ihre Räume wieder nutzbar sind.' },
+];
+
+const zielgruppen = [
+  { icon: 'users', t: 'Privatkunden', d: 'Ob Eigentumswohnung, Haus oder Mietwohnung: Wir helfen schnell, erklären verständlich und arbeiten sauber – auch in bewohnten Räumen.' },
+  { icon: 'building', t: 'Hausverwaltungen', d: 'Eine Nummer für den Schadenfall: koordinierte Abwicklung, klare Kommunikation und verlässliche Abstimmung mit allen Beteiligten.' },
+  { icon: 'shield', t: 'Gewerbekunden', d: 'Wir planen Maßnahmen so, dass Ihr Betrieb möglichst weiterlaufen kann – strukturiert, sauber und gut abgestimmt.' },
+];
+
+const warum = [
+  'Schnelle Reaktion im Schadenfall',
+  '24/7 direkt erreichbar',
+  'Moderne Mess- und Trocknungstechnik',
+  'Transparente Abstimmung in jedem Schritt',
+  'Leistungen aus einer Hand – inklusive koordinierter Fachgewerke',
+  'Saubere Arbeitsweise, auch in bewohnten Objekten',
+  'Regional verwurzelt in Berlin und Umgebung',
+];
+
+const ablauf = [
+  { t: 'Kontakt', d: 'Sie rufen an oder senden das Formular – rund um die Uhr.' },
+  { t: 'Rückmeldung', d: 'Wir melden uns zurück und besprechen die Situation.' },
+  { t: 'Termin oder Soforthilfe', d: 'Je nach Dringlichkeit vereinbaren wir einen Termin oder handeln sofort.' },
+  { t: 'Schadenaufnahme', d: 'Wir verschaffen uns vor Ort ein genaues Bild und messen, wo nötig.' },
+  { t: 'Maßnahmenplanung', d: 'Sie erhalten eine klare Empfehlung zum weiteren Vorgehen.' },
+  { t: 'Durchführung', d: 'Wir setzen die abgestimmten Maßnahmen um und halten Sie auf dem Laufenden.' },
+];
+---
+<Base
+  title="Wasserschadensanierung Berlin – 24/7 | SANI Trocknung"
+  description="Wasserschaden in Berlin? SANI Trocknung hilft rund um die Uhr: Leckageortung, Trocknung, Sanierung und Wiederherstellung aus einer Hand. Jetzt melden."
+>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container container--wide hero__inner">
+      <div class="hero__content">
+        <span class="eyebrow hero__eyebrow">24/7-Notdienst · Berlin &amp; Umland</span>
+        <h1>Wasserschaden in Berlin? Wir kümmern uns um den Rest.</h1>
+        <p class="hero__lead">
+          Von der Leckageortung über die Trocknung bis zur Wiederherstellung –
+          schnell, sauber und zuverlässig in Berlin und Umgebung. Rund um die Uhr
+          erreichbar.
+        </p>
+        <div class="hero__cta btn-group btn-group--stack">
+          <Button href="/kontakt/#formular" variant="primary" icon="drop" size="lg">
+            Wasserschaden melden
+          </Button>
+          <Button href={`tel:${site.phoneLink}`} variant="secondary" icon="phone" size="lg" phone>
+            Jetzt anrufen: {site.phoneDisplay}
+          </Button>
+        </div>
+        <ul class="hero__trust">
+          {trust.map((t) => (
+            <li class="badge"><Icon name="check" size={15} />{t}</li>
+          ))}
+        </ul>
+      </div>
+      <div class="hero__media">
+        <!-- Hero-Medium: in Produktion Video (Desktop) + Poster (mobil), Kap. 13 -->
+        <MediaPlaceholder
+          file="hero-poster"
+          alt="Technische Trocknungsgeräte in einem vorbereiteten Raum"
+          ratio="4 / 3"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- SOFORTHILFE -->
+  <section class="section" aria-labelledby="soforthilfe-h">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">In fünf Schritten</span>
+        <h2 id="soforthilfe-h">Wasserschaden? So gehen wir vor.</h2>
+        <span class="measure-line"></span>
+        <p class="lead">
+          Ein Wasserschaden ist belastend – der Weg zur Lösung muss es nicht sein.
+          Wir bringen Struktur in die Situation:
+        </p>
+      </div>
+      <ol class="process reveal-stagger">
+        {soforthilfe.map((s) => (
+          <li class="process__step">
+            <h3>{s.t}</h3>
+            <p>{s.d}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- LEISTUNGEN -->
+  <section class="section section--alt" aria-labelledby="leistungen-h">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Unsere Leistungen</span>
+        <h2 id="leistungen-h">Unsere Leistungen. Ein Ansprechpartner.</h2>
+        <span class="measure-line"></span>
+        <p class="lead">
+          Sieben Leistungsbereiche, klar gebündelt – damit Sie sich um nichts
+          Weiteres kümmern müssen.
+        </p>
+      </div>
+      <div class="grid grid-3 reveal-stagger">
+        {servicesData.map((s) => (
+          <ServiceCard slug={s.slug} label={s.label} text={s.cardText} icon={s.icon} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- RUNDUM-SORGLOS (Ankerband dunkel) -->
+  <section class="section section--dark" aria-labelledby="rundum-h">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Rundum-sorglos</span>
+        <h2 id="rundum-h">Ein Ansprechpartner. Alle wichtigen Schritte.</h2>
+        <span class="measure-line"></span>
+      </div>
+      <p class="lead reveal" style="max-width:58ch">
+        Bei einem Wasserschaden greifen viele Arbeitsschritte ineinander. Bei uns
+        behalten Sie einen Ansprechpartner – wir koordinieren den Rest.
+      </p>
+      <ul class="chain reveal-stagger">
+        {['Schadenaufnahme', 'Leckageortung', 'Feuchtemessung', 'Rückbau', 'Technische Trocknung', 'Sanierung', 'Wiederherstellung'].map((step) => (
+          <li class="chain__item">{step}</li>
+        ))}
+      </ul>
+      <p class="text-soft reveal" style="color:var(--color-text-inverse-soft);margin-top:var(--space-5)">
+        Der konkrete Umfang richtet sich immer nach Schadenbild und Auftrag.
+      </p>
+    </div>
+  </section>
+
+  <!-- ZIELGRUPPEN -->
+  <section class="section" aria-labelledby="zielgruppen-h">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Für wen wir da sind</span>
+        <h2 id="zielgruppen-h">Für wen wir im Einsatz sind.</h2>
+        <span class="measure-line"></span>
+      </div>
+      <div class="grid grid-3 reveal-stagger">
+        {zielgruppen.map((z) => (
+          <article class="card">
+            <Icon name={z.icon} size={30} class="card__icon" />
+            <h3 class="card__title">{z.t}</h3>
+            <p class="card__text">{z.d}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- WARUM SANI -->
+  <section class="section section--alt" aria-labelledby="warum-h">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Warum SANI</span>
+        <h2 id="warum-h">Warum SANI Trocknung?</h2>
+        <span class="measure-line"></span>
+      </div>
+      <ul class="check-list check-list--cols reveal-stagger">
+        {warum.map((w) => (<li>{w}</li>))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- EINSATZGEBIET -->
+  <section class="section" aria-labelledby="gebiet-h">
+    <div class="container">
+      <div class="split">
+        <div class="reveal">
+          <span class="eyebrow">Einsatzgebiet</span>
+          <h2 id="gebiet-h">Im Einsatz in Berlin und Umgebung.</h2>
+          <span class="measure-line"></span>
+          <p class="lead" style="margin-top:var(--space-5)">
+            Von Spandau bis Köpenick, von Pankow bis Lichtenrade – und im näheren
+            Umland von Potsdam bis Bernau. Wenn es schnell gehen muss, zählt Nähe.
+          </p>
+          <p style="margin-top:var(--space-4)">
+            <a href="/einsatzgebiete/" class="link-arrow">Alle Einsatzgebiete ansehen</a>
+          </p>
+        </div>
+        <div class="split__media reveal">
+          <AreaMap />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABLAUF -->
+  <section class="section section--alt" aria-labelledby="ablauf-h">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Ablauf</span>
+        <h2 id="ablauf-h">So läuft Ihre Anfrage ab.</h2>
+        <span class="measure-line"></span>
+      </div>
+      <ol class="process process--row reveal-stagger" style="--cols:3">
+        {ablauf.map((a) => (
+          <li class="process__step">
+            <h3>{a.t}</h3>
+            <p>{a.d}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- FAQ-VORSCHAU -->
+  <section class="section" aria-labelledby="faq-h">
+    <div class="container container--narrow">
+      <div class="section-head reveal">
+        <span class="eyebrow">Häufige Fragen</span>
+        <h2 id="faq-h">Häufige Fragen.</h2>
+        <span class="measure-line"></span>
+      </div>
+      <FaqAccordion items={faqPreview} idPrefix="home-faq" />
+      <p style="margin-top:var(--space-5)">
+        <a href="/faq/" class="link-arrow">Alle Fragen und Antworten</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ABSCHLUSS-CTA -->
+  <CtaSection
+    title="Wasserschaden entdeckt? Melden Sie sich jetzt."
+    text="Je früher die Ursache gefunden und die Trocknung eingeleitet wird, desto besser lassen sich Folgeschäden begrenzen. Wir sind rund um die Uhr für Sie erreichbar."
+  />
+</Base>
+
+<style>
+  .chain {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+    margin: var(--space-5) 0 0;
+  }
+  .chain__item {
+    position: relative;
+    padding: 0.5em 1em;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: var(--radius-pill);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
+    max-width: none;
+  }
+  .chain__item:not(:last-child)::after {
+    content: '→';
+    margin-left: 0.7em;
+    color: var(--c-water-300);
+  }
+  @media (min-width: 720px) {
+    .check-list--cols {
+      grid-template-columns: 1fr 1fr;
+      column-gap: var(--space-6);
+    }
+  }
+</style>

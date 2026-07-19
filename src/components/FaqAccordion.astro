@@ -1,0 +1,37 @@
+---
+import Icon from './Icon.astro';
+interface Props {
+  items: { q: string; a: string }[];
+  idPrefix?: string;
+}
+const { items, idPrefix = 'faq' } = Astro.props;
+---
+<div class="accordion" data-accordion>
+  {
+    items.map((item, i) => {
+      const panelId = `${idPrefix}-panel-${i}`;
+      const btnId = `${idPrefix}-btn-${i}`;
+      return (
+        <div class="accordion__item">
+          <h3 style="margin:0">
+            <button
+              type="button"
+              class="accordion__trigger"
+              id={btnId}
+              aria-controls={panelId}
+              aria-expanded="false"
+            >
+              <span>{item.q}</span>
+              <Icon name="chevron" size={20} class="chevron" />
+            </button>
+          </h3>
+          <div class="accordion__panel" id={panelId} role="region" aria-labelledby={btnId} data-open="false">
+            <div>
+              <p set:html={item.a} />
+            </div>
+          </div>
+        </div>
+      );
+    })
+  }
+</div>

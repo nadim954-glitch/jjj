@@ -1,0 +1,38 @@
+---
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../config/site';
+---
+<Base
+  title="Seite nicht gefunden | SANI Trocknung"
+  description="Die aufgerufene Seite existiert nicht oder wurde verschoben."
+  noindex={true}
+  stickyBar={false}
+>
+  <section class="section" style="padding-block:var(--space-9)">
+    <div class="container container--narrow" style="text-align:center">
+      <span class="eyebrow">Fehler 404</span>
+      <h1>Diese Seite gibt es hier nicht.</h1>
+      <span class="measure-line" style="margin-inline:auto"></span>
+      <p class="lead" style="margin:var(--space-5) auto 0">
+        Die aufgerufene Adresse existiert nicht oder wurde verschoben. Kein Problem –
+        hier geht es weiter:
+      </p>
+
+      <div class="btn-group btn-group--stack" style="justify-content:center;margin-top:var(--space-6)">
+        <Button href="/" variant="primary">Zur Startseite</Button>
+        <Button href="/leistungen/" variant="secondary">Unsere Leistungen</Button>
+        <Button href="/kontakt/" variant="secondary">Kontakt aufnehmen</Button>
+      </div>
+
+      <div class="notice" style="margin-top:var(--space-7);text-align:left">
+        <p>
+          <Icon name="phone" size={18} style="display:inline;vertical-align:-4px;margin-right:0.3em" />
+          <strong>Akuter Wasserschaden?</strong> Rufen Sie uns direkt an:
+          <a href={`tel:${site.phoneLink}`} class="tabular">{site.phoneDisplay}</a> – rund um die Uhr.
+        </p>
+      </div>
+    </div>
+  </section>
+</Base>

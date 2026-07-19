@@ -1,0 +1,18 @@
+---
+// Lokaler, klar beschrifteter Medienplatzhalter (PH-07).
+// Keine Fremdbilder. In Produktion durch <picture> mit AVIF/WebP ersetzen.
+interface Props {
+  file: string; // Dateiname ohne Endung, z. B. "leistung-bautrocknung"
+  alt: string;
+  ratio?: string; // z. B. "4 / 3"
+  class?: string;
+}
+const { file, alt, ratio = '4 / 3', class: className = '' } = Astro.props;
+---
+<div class={`media-ph ${className}`} style={`--ratio:${ratio}`} role="img" aria-label={alt}>
+  <span class="media-ph__tag">Platzhalter · PH-07</span>
+  <div>
+    <span class="media-ph__label">{alt}</span>
+    <span class="media-ph__file">/assets/images/{file}.avif</span>
+  </div>
+</div>

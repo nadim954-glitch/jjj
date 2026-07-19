@@ -1,0 +1,29 @@
+---
+import { site } from '../config/site';
+import Button from './Button.astro';
+interface Props {
+  title: string;
+  text?: string;
+  reportLabel?: string;
+  variant?: 'dark' | 'deep';
+}
+const {
+  title,
+  text,
+  reportLabel = 'Schaden melden',
+  variant = 'deep',
+} = Astro.props;
+---
+<section class={`section section--${variant} cta-section`}>
+  <div class="container container--narrow" style="text-align:center">
+    <span class="eyebrow">Soforthilfe</span>
+    <h2>{title}</h2>
+    {text && <p class="lead" style="margin-inline:auto">{text}</p>}
+    <div class="btn-group btn-group--stack" style="justify-content:center;margin-top:var(--space-6)">
+      <Button href="/kontakt/#formular" variant="primary" icon="drop">{reportLabel}</Button>
+      <Button href={`tel:${site.phoneLink}`} variant="secondary" icon="phone" phone>
+        {site.phoneDisplay} anrufen
+      </Button>
+    </div>
+  </div>
+</section>

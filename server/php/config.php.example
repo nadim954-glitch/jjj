@@ -1,0 +1,29 @@
+<?php
+/**
+ * Beispielkonfiguration für den Kontaktformular-Mailhandler.
+ *
+ * 1. Diese Datei nach `config.php` kopieren.
+ * 2. Werte anpassen (Empfänger, Absender, Domain).
+ * 3. `config.php` NICHT ins Repository committen (siehe .gitignore).
+ *
+ * Alle mit [PH] markierten Werte sind vor Produktivbetrieb zu setzen.
+ */
+
+return [
+    // [PH-11] Empfängeradresse für Formulareingänge (nicht im Repo, nicht im Request):
+    'recipient' => 'anfragen@sani-trocknung.de',
+
+    // Fester Domain-Absender (SPF/DKIM für diese Domain einrichten!):
+    'from' => 'SANI Trocknung <formular@sani-trocknung.de>',
+
+    // Eigene Domain für Origin/Referer-Plausibilität (ohne Protokoll):
+    'allowed_host' => 'sani-trocknung.de',
+
+    // Einfaches Rate-Limit je IP:
+    'rate_limit_dir' => sys_get_temp_dir(),
+    'rate_limit_seconds' => 30,
+
+    // Entwicklungsmodus: true = KEINE echte E-Mail senden (nur Erfolg simulieren).
+    // Für den Produktivbetrieb auf false setzen (PH-08).
+    'dev_mode' => true,
+];

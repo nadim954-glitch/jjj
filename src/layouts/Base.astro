@@ -1,0 +1,71 @@
+---
+import '../styles/global.css';
+import { site } from '../config/site';
+import Header from '../components/Header.astro';
+import MobileNav from '../components/MobileNav.astro';
+import Footer from '../components/Footer.astro';
+import StickyBar from '../components/StickyBar.astro';
+import Schema from '../components/Schema.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  noindex?: boolean;
+  breadcrumb?: { name: string; url: string }[];
+  faq?: { q: string; a: string }[];
+  stickyBar?: boolean;
+  bodyClass?: string;
+}
+const {
+  title,
+  description,
+  noindex = false,
+  breadcrumb,
+  faq,
+  stickyBar = true,
+  bodyClass = '',
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, site.baseUrl).href;
+// [PH-12] OG-Vorschaubild (1200×630) noch offen – bewusst ohne og:image.
+---
+<!doctype html>
+<html lang="de" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.brand} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="de_DE" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="theme-color" content="#0a2033" />
+    <!-- [PH-06] Favicon aus Logo ableiten -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <Schema breadcrumb={breadcrumb} faq={faq} />
+  </head>
+  <body class={[stickyBar ? 'has-stickybar' : '', bodyClass].filter(Boolean).join(' ')}>
+    <a href="#main" class="skip-link">Zum Inhalt springen</a>
+    <Header />
+    <MobileNav />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    {stickyBar && <StickyBar />}
+    <script>
+      // Astro bündelt & minimiert dieses Skript (Progressive Enhancement).
+      import '../scripts/main.js';
+    </script>
+  </body>
+</html>

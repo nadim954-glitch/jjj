@@ -1,0 +1,202 @@
+---
+import Base from '../../layouts/Base.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import Button from '../../components/Button.astro';
+import Icon from '../../components/Icon.astro';
+import MediaPlaceholder from '../../components/MediaPlaceholder.astro';
+import FaqAccordion from '../../components/FaqAccordion.astro';
+import CtaSection from '../../components/CtaSection.astro';
+import { site } from '../../config/site';
+import { servicesData, getService } from '../../data/services';
+
+export function getStaticPaths() {
+  return servicesData.map((s) => ({ params: { slug: s.slug } }));
+}
+
+const { slug } = Astro.params;
+const service = getService(slug!)!;
+
+const breadcrumbItems = [
+  { name: 'Start', url: '/' },
+  { name: 'Leistungen', url: '/leistungen/' },
+  { name: service.label, url: `/leistungen/${service.slug}/` },
+];
+---
+<Base
+  title={service.metaTitle}
+  description={service.metaDescription}
+  breadcrumb={breadcrumbItems.map((b) => ({ name: b.name, url: b.url }))}
+>
+  <!-- Hinweis: FAQPage-Schema bewusst NUR auf /faq/ (Masterdokument Kap. 15 / 8.4),
+       um Duplikat-Markup zu vermeiden. Sichtbares Akkordeon bleibt erhalten. -->
+  <Breadcrumb items={breadcrumbItems} />
+
+  <!-- Intro -->
+  <section class="section" style="padding-top:var(--space-5)">
+    <div class="container">
+      <div class="split">
+        <div>
+          <span class="eyebrow">Leistung</span>
+          <h1>{service.h1}</h1>
+          <span class="measure-line"></span>
+          <p class="lead" style="margin-top:var(--space-5)">{service.intro}</p>
+          <div class="btn-group btn-group--stack" style="margin-top:var(--space-6)">
+            <Button href="/kontakt/#formular" variant="primary" icon="drop">Anfrage senden</Button>
+            <Button href={`tel:${site.phoneLink}`} variant="secondary" icon="phone" phone>
+              Jetzt anrufen
+            </Button>
+          </div>
+        </div>
+        <div class="split__media">
+          <MediaPlaceholder file={service.image.file} alt={service.image.alt} />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Typische Situationen -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Typische Situationen</span>
+        <h2>Wann diese Leistung gefragt ist</h2>
+        <span class="measure-line"></span>
+      </div>
+      <ul class="check-list check-list--cols">
+        {service.situations.map((s) => (<li>{s}</li>))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Vorgehensweise / Leistungen -->
+  <section class="section">
+    <div class="container container--narrow prose">
+      <span class="eyebrow">{service.approachTitle}</span>
+      <h2 style="margin-top:var(--space-2)">{service.approachTitle}</h2>
+      <span class="measure-line"></span>
+      <p style="margin-top:var(--space-5)">{service.approach}</p>
+
+      {service.ownServices && (
+        <ul class="tag-list">
+          {service.ownServices.map((o) => (<li>{o}</li>))}
+        </ul>
+      )}
+
+      {service.coordination && (
+        <div class="notice" style="margin-top:var(--space-5)">
+          <h3 style="font-size:1.05rem;margin-bottom:var(--space-2)">{service.coordination.title}</h3>
+          <p>{service.coordination.text}</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Vorteile -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Ihre Vorteile</span>
+        <h2>{service.advantagesTitle}</h2>
+        <span class="measure-line"></span>
+      </div>
+      <ul class="check-list check-list--cols">
+        {service.advantages.map((a) => (<li>{a}</li>))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Ablauf -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Ablauf</span>
+        <h2>Schritt für Schritt</h2>
+        <span class="measure-line"></span>
+      </div>
+      <ol class="process">
+        {service.steps.map((step) => (
+          <li class="process__step"><h3 style="font-weight:var(--fw-medium)">{step}</h3></li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section section--alt">
+    <div class="container container--narrow">
+      <div class="section-head">
+        <span class="eyebrow">Häufige Fragen</span>
+        <h2>Gut zu wissen</h2>
+        <span class="measure-line"></span>
+      </div>
+      <FaqAccordion items={service.faqs} idPrefix={`svc-${service.slug}`} />
+    </div>
+  </section>
+
+  <!-- Einsatzgebiet-Hinweis + interne Links -->
+  <section class="section">
+    <div class="container">
+      <div class="notice">
+        <p>
+          <Icon name="location" size={18} style="display:inline;vertical-align:-4px;margin-right:0.3em" />
+          Wir sind in ganz Berlin und im näheren Umland für Sie im Einsatz.
+          <a href="/einsatzgebiete/">Zu den Einsatzgebieten</a>.
+        </p>
+      </div>
+
+      <div class="related">
+        <span class="eyebrow">Passende Leistungen</span>
+        <ul class="related__list">
+          {service.related.map((r) => (
+            <li>
+              <a href={r.slug ? `/leistungen/${r.slug}/` : '/leistungen/'} class="link-arrow">
+                {r.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <CtaSection
+    title="Verdacht oder Schaden? Sprechen Sie mit uns."
+    text="Schildern Sie uns kurz die Situation – wir melden uns schnellstmöglich zurück und stimmen die nächsten Schritte mit Ihnen ab."
+    reportLabel="Anfrage senden"
+  />
+</Base>
+
+<style>
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+    margin: var(--space-5) 0 0;
+  }
+  .tag-list li {
+    padding: 0.4em 0.85em;
+    background: var(--c-water-050);
+    border: 1px solid var(--c-water-100);
+    border-radius: var(--radius-pill);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
+    color: var(--c-navy-800);
+    max-width: none;
+  }
+  .related {
+    margin-top: var(--space-6);
+  }
+  .related__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-6);
+    list-style: none;
+    padding: 0;
+    margin: var(--space-3) 0 0;
+  }
+  .related__list li {
+    max-width: none;
+  }
+</style>

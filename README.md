@@ -1,77 +1,59 @@
-# J.A.R.V.I.S — Sprach-Interface
+# SANI Trocknung – Website
 
-Ein futuristisches "Jarvis"-Interface wie in Iron Man: ein großer, leuchtender
-Energie-Orb, mit dem du **sprechen** kannst und dem du dein **Ziel** mitteilst.
-Der Orb reagiert live auf deine Stimme, zeigt das erkannte Ziel als Text an und
-**bestätigt es per deutscher Sprachausgabe**.
+Produktionsnahe, statische Unternehmenswebsite für **SANI Trocknung**
+(Wasserschadensanierung, Bautrocknung, Leckageortung u. a. in Berlin und Umland).
 
-Reines Frontend — keine KI-Anbindung, keine Installation, kein Build.
+- **Stack:** [Astro 5](https://astro.build), statische Ausgabe (reines HTML/CSS,
+  minimales JS), hostingunabhängig.
+- **Designrichtung:** „Tiefenwasser Editorial" – ruhig, hochwertig, vertrauenswürdig.
+- **Datensparsam:** keine externen Requests im Auslieferungszustand (Schriften
+  lokal/System, keine Google Fonts, keine Maps, kein Tracking).
 
-![Ein leuchtender, audio-reaktiver 3D-Orb im HUD-Design]
-
-## Funktionen
-
-- **3D-Orb** (Three.js + WebGL-Shader) mit organisch waberndem Plasma und Bloom-Glühen.
-- **Audio-reaktiv:** Der Orb pulsiert stärker, je lauter du sprichst.
-- **Spracherkennung** auf Deutsch (`de-DE`) — Ziele werden live transkribiert.
-- **Sprachausgabe:** JARVIS bestätigt jedes Ziel („Ziel verstanden: …“).
-- **HUD** im Sci-Fi-Stil: Uhr, Statuszeile, Live-Transkript, Liste erfasster Ziele.
-
-## Nutzung
-
-1. Datei `index.html` in **Google Chrome** oder **Microsoft Edge** öffnen
-   (Doppelklick genügt).
-2. Beim ersten Klick den **Mikrofonzugriff erlauben**.
-3. Auf den **Orb** oder den **Mikrofon-Button** klicken → Status wechselt zu
-   „Ich höre zu …“.
-4. Dein Ziel auf Deutsch sprechen. Es erscheint als Text, wird gespeichert und
-   von JARVIS bestätigt.
-5. Erneut klicken, um das Zuhören zu stoppen.
-
-### Alternativ über einen lokalen Server
-
-Manche Browser erlauben Mikrofon/Sprache nur über `http(s)`/`localhost`:
+## Schnellstart
 
 ```bash
-python3 -m http.server 8000
-# dann im Browser öffnen:
-# http://localhost:8000
+npm ci
+npm run dev       # Entwicklungsserver → http://localhost:4321
+npm run build     # Produktions-Build → dist/
+npm run preview   # Build lokal ansehen
+npm run check     # Astro Typ-/Diagnose-Check
 ```
 
-## Hinweise
+## Struktur
 
-- **Browser:** Die Spracherkennung (Web Speech API) läuft zuverlässig in
-  **Chrome/Edge**. In Firefox/Safari wird der Orb angezeigt, die Erkennung ist
-  dort aber nicht vollständig verfügbar — ein Hinweis wird eingeblendet.
-- **Internet:** Three.js wird beim ersten Öffnen per CDN geladen — eine
-  Internetverbindung ist dafür nötig.
-- **Datenschutz:** Alles läuft lokal im Browser. Die Spracherkennung nutzt die
-  browsereigene Web Speech API; es wird nichts an eigene Server gesendet.
+```
+src/
+├─ config/site.ts        ZENTRALE Konfiguration (Kontaktdaten, Feature-Flags)
+├─ layouts/Base.astro    <head>, Meta/OG/Schema, Header, Footer, Sticky-Leiste
+├─ components/           Header, MobileNav, Footer, StickyBar, Icon, Button,
+│                        ServiceCard, FaqAccordion, MediaPlaceholder, AreaMap,
+│                        Breadcrumb, CtaSection, Schema
+├─ data/                 nav.ts, services.ts, faq.ts (Inhalte)
+├─ styles/               tokens · base · layout · components (eine CSS-Ausgabe)
+├─ scripts/main.js       Nav, Dropdown, Akkordeon, Reveal-Observer, Formular-UX
+└─ pages/                16 Seiten (Start, Leistungen + 7 Details, Über uns,
+                         Einsatzgebiete, FAQ, Kontakt, Impressum, Datenschutz, 404)
+public/                  robots.txt, favicon (Platzhalter), assets/ (Medienordner)
+server/php/              optionaler Mailhandler (nur bei PHP-Hosting)
+```
 
-## Das Gehirn
+## Wichtige Dateien
 
-JARVIS hat ein **eingebautes Gehirn** direkt im Browser: Es versteht viele
-Absichten (Begrüßung, Small Talk, Uhrzeit/Datum, Ziele nennen/abfragen/löschen),
-antwortet abwechslungsreich und mit Emotion, merkt sich **Name und Ziele über
-Sitzungen hinweg** (localStorage) und hakt bei vagen Zielen nach. Kein Setup,
-keine Kosten, funktioniert offline.
+- **`src/config/site.ts`** – einzige Quelle für Kontaktdaten. Telefonnummer,
+  E-Mail, Adresse, Formular-Endpunkt und Feature-Flags hier ändern.
+- **`PLATZHALTER.md`** – alle offenen Angaben (PH-01 … PH-12) mit Fundstellen und
+  Veröffentlichungs-Checkliste.
+- **`PLAN.md`** – Umsetzungsweg und getroffene Entscheidungen.
 
-## Optional: echte KI (Claude) anbinden
+## Vor Veröffentlichung
 
-Für vollwertiges, freies Sprachverständnis lässt sich die **Claude API**
-anbinden — ohne Backend:
+Mehrere Angaben sind bewusst als Platzhalter geführt und **vor dem Livegang zu
+ersetzen/prüfen** (Impressum, Datenschutz, Logo/Medien, Hosting/Formular-Endpunkt,
+Zweitnummer). Details in `PLATZHALTER.md`. Rechtstexte durch eine fachkundige
+Stelle prüfen lassen.
 
-1. Auf den Button **„🔑 KI"** klicken und einen Anthropic API-Schlüssel
-   (beginnt mit `sk-ant-…`) eingeben.
-2. Der Schlüssel wird **nur lokal in deinem Browser** (localStorage) gespeichert
-   und ausschließlich an Anthropic gesendet — nie an Dritte, nie ins Repo.
-3. JARVIS antwortet dann über `claude-opus-4-8`. Fällt die KI aus (kein Netz,
-   Fehler, eingebettete Vorschau), übernimmt automatisch das eingebaute Gehirn.
+## Deployment
 
-Hinweise:
-- Der direkte Browser-Aufruf nutzt den Header
-  `anthropic-dangerous-direct-browser-access`. Nutze das nur für deinen
-  **persönlichen** Gebrauch mit deinem eigenen Schlüssel.
-- In der eingebetteten Artifact-Vorschau blockiert die Sicherheits-Policy externe
-  API-Aufrufe — die KI funktioniert dort nicht. Öffne die Seite dafür lokal
-  (`http://localhost`) oder über GitHub Pages.
+`npm run build` erzeugt `dist/` (rein statisch) für beliebiges Webhosting
+(HTTPS, HTTP/2, eigene 404-Zuweisung, Redirect auf kanonisches Schema).
+Optionaler Formularversand per PHP: siehe `server/php/README.md`.

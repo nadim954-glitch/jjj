@@ -1,0 +1,863 @@
+/* ==========================================================================
+   SANI Trocknung – Komponenten
+   ========================================================================== */
+
+/* --- Buttons ------------------------------------------------------------- */
+.btn {
+  --btn-pad-y: 0.85em;
+  --btn-pad-x: 1.5em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55em;
+  min-height: 48px;
+  padding: var(--btn-pad-y) var(--btn-pad-x);
+  font-family: var(--font-body);
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-body);
+  line-height: 1.1;
+  text-decoration: none;
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast),
+    border-color var(--transition-fast), transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.btn:hover {
+  text-decoration: none;
+}
+
+.btn .icon {
+  width: 1.2em;
+  height: 1.2em;
+  flex: none;
+}
+
+/* Primär – CTA-Fläche Wasserblau, Text Navy */
+.btn-primary {
+  background: var(--color-cta);
+  color: var(--color-cta-text);
+  border-color: var(--color-cta);
+}
+
+.btn-primary:hover {
+  background: var(--color-cta-hover);
+  border-color: var(--color-cta-hover);
+  color: var(--color-cta-text);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-m);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Sekundär auf hell – Navy-Rahmen, füllt bei Hover */
+.btn-secondary {
+  background: transparent;
+  color: var(--c-navy-900);
+  border-color: var(--c-navy-900);
+}
+
+.btn-secondary:hover {
+  background: var(--c-navy-900);
+  color: var(--color-text-inverse);
+  transform: translateY(-1px);
+}
+
+/* Sekundär auf dunkel – weißer Rahmen */
+.on-dark .btn-secondary,
+.section--dark .btn-secondary,
+.section--deep .btn-secondary {
+  color: var(--color-text-inverse);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+.on-dark .btn-secondary:hover,
+.section--dark .btn-secondary:hover,
+.section--deep .btn-secondary:hover {
+  background: var(--color-text-inverse);
+  color: var(--c-navy-900);
+  border-color: var(--color-text-inverse);
+}
+
+/* Telefon-Button (Ghost) mit tabellarischen Ziffern */
+.btn-phone {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-lg {
+  min-height: 54px;
+  font-size: 1.05rem;
+}
+
+/* --- Button-Gruppe ------------------------------------------------------- */
+.btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+@media (max-width: 479px) {
+  .btn-group--stack .btn {
+    width: 100%;
+  }
+}
+
+/* --- Textlink mit Pfeil --------------------------------------------------- */
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-weight: var(--fw-semibold);
+  text-decoration: none;
+}
+
+.link-arrow::after {
+  content: '→';
+  transition: transform var(--transition-fast);
+}
+
+.link-arrow:hover {
+  text-decoration: underline;
+}
+
+.link-arrow:hover::after {
+  transform: translateX(3px);
+}
+
+/* --- Grid-Helfer --------------------------------------------------------- */
+.grid {
+  display: grid;
+  gap: var(--space-5);
+}
+
+@media (min-width: 720px) {
+  .grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* --- Leistungskarte ------------------------------------------------------ */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-m);
+  overflow: hidden;
+  transition: border-color var(--transition-base), box-shadow var(--transition-base),
+    transform var(--transition-base);
+}
+
+.card__icon {
+  width: 30px;
+  height: 30px;
+  color: var(--c-water-700);
+}
+
+.card__title {
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-semibold);
+}
+
+.card__title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.card__text {
+  color: var(--color-text-soft);
+  font-size: var(--fs-small);
+  margin: 0;
+}
+
+/* Stretched-Link: ganze Karte klickbar, ein Tab-Stopp */
+.card__title a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+/* Messlinie am unteren Kartenrand wächst bei Hover/Focus */
+.card::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 24px;
+  background: var(--color-accent);
+  transition: width var(--transition-base);
+}
+
+.card:hover,
+.card:focus-within {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-m);
+  transform: translateY(-2px);
+}
+
+.card:hover::after,
+.card:focus-within::after {
+  width: 100%;
+}
+
+/* --- Feature-/Info-Liste (Vorteile, Warum) ------------------------------- */
+.check-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.check-list li {
+  position: relative;
+  padding-left: 1.9rem;
+  max-width: 60ch;
+}
+
+.check-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  width: 1.15rem;
+  height: 1.15rem;
+  background: var(--c-water-050);
+  border: 1.5px solid var(--c-water-600);
+  border-radius: 50%;
+}
+
+.check-list li::after {
+  content: '';
+  position: absolute;
+  left: 0.4rem;
+  top: 0.42em;
+  width: 0.32rem;
+  height: 0.58rem;
+  border: solid var(--c-water-700);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.section--dark .check-list li::before,
+.section--deep .check-list li::before {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--c-water-300);
+}
+
+.section--dark .check-list li::after,
+.section--deep .check-list li::after {
+  border-color: var(--c-water-300);
+}
+
+/* --- Prozess / Timeline (Messlinie) -------------------------------------- */
+.process {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-5);
+  counter-reset: step;
+}
+
+.process__step {
+  position: relative;
+  padding-left: 3.25rem;
+  max-width: 62ch;
+}
+
+.process__step::before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-variant-numeric: tabular-nums;
+  color: var(--c-water-700);
+  background: var(--c-water-050);
+  border: 1.5px solid var(--c-water-100);
+  border-radius: 50%;
+}
+
+/* durchgehende vertikale Messlinie zwischen den Pegelpunkten */
+.process__step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: calc(1.125rem - 1px);
+  top: 2.25rem;
+  bottom: calc(-1 * var(--space-5));
+  width: 2px;
+  background: var(--color-border);
+}
+
+.process__step h3 {
+  font-size: 1.05rem;
+  margin-bottom: var(--space-1);
+}
+
+.process__step p {
+  color: var(--color-text-soft);
+  font-size: var(--fs-small);
+  margin: 0;
+}
+
+.section--dark .process__step::before,
+.section--deep .process__step::before {
+  color: var(--c-navy-950);
+  background: var(--c-water-300);
+  border-color: var(--c-water-300);
+}
+
+.section--dark .process__step:not(:last-child)::after,
+.section--deep .process__step:not(:last-child)::after {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.section--dark .process__step p,
+.section--deep .process__step p {
+  color: var(--color-text-inverse-soft);
+}
+
+/* horizontal ab großem Viewport (nur ohne Zeitachse-Text-Overflow) */
+@media (min-width: 1024px) {
+  .process--row {
+    grid-template-columns: repeat(var(--cols, 3), 1fr);
+    gap: var(--space-6);
+  }
+  .process--row .process__step {
+    padding-left: 0;
+    padding-top: 3.25rem;
+  }
+  .process--row .process__step:not(:last-child)::after {
+    left: 2.25rem;
+    top: calc(1.125rem - 1px);
+    bottom: auto;
+    right: calc(-1 * var(--space-6));
+    width: auto;
+    height: 2px;
+  }
+}
+
+/* --- Hinweisbox ---------------------------------------------------------- */
+.notice {
+  padding: var(--space-4) var(--space-5);
+  background: var(--c-water-050);
+  border-left: 3px solid var(--c-water-600);
+  border-radius: var(--radius-s);
+  font-size: var(--fs-small);
+}
+
+.notice p {
+  margin: 0;
+}
+
+.notice--warn {
+  background: var(--c-warn-bg);
+  border-left-color: var(--c-warn);
+}
+
+.notice--success {
+  background: var(--c-success-bg);
+  border-left-color: var(--c-success);
+}
+
+.notice--error {
+  background: var(--c-error-bg);
+  border-left-color: var(--c-error);
+}
+
+/* Sichtbarer Entwurfs-/Platzhalterhinweis */
+.draft-note {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: var(--space-4) var(--space-5);
+  background: var(--c-warn-bg);
+  border: 1px dashed var(--c-warn);
+  border-radius: var(--radius-s);
+  color: var(--c-warn);
+  font-size: var(--fs-small);
+  margin-bottom: var(--space-6);
+}
+
+.draft-note strong {
+  color: var(--c-warn);
+}
+
+/* --- Badges / Vertrauensmerkmale ---------------------------------------- */
+.trust-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  padding: 0.4em 0.85em;
+  font-size: var(--fs-small);
+  font-weight: var(--fw-medium);
+  background: var(--c-stone-100);
+  border-radius: var(--radius-pill);
+  color: var(--color-text);
+  max-width: none;
+}
+
+.badge .icon {
+  width: 1.05em;
+  height: 1.05em;
+  color: var(--c-water-700);
+  flex: none;
+}
+
+.on-dark .badge,
+.section--dark .badge,
+.section--deep .badge {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-inverse);
+}
+
+.on-dark .badge .icon,
+.section--dark .badge .icon,
+.section--deep .badge .icon {
+  color: var(--c-water-300);
+}
+
+/* --- Media-Platzhalter (lokale Medien, PH-07) ---------------------------- */
+.media-ph {
+  position: relative;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  aspect-ratio: var(--ratio, 4 / 3);
+  background: repeating-linear-gradient(
+      135deg,
+      var(--c-stone-100),
+      var(--c-stone-100) 12px,
+      var(--c-stone-200) 12px,
+      var(--c-stone-200) 24px
+    );
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-m);
+  color: var(--color-text-soft);
+  padding: var(--space-4);
+  overflow: hidden;
+}
+
+.media-ph__label {
+  font-size: var(--fs-small);
+  font-weight: var(--fw-semibold);
+  color: var(--c-navy-800);
+}
+
+.media-ph__file {
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: 0.72rem;
+  color: var(--color-text-soft);
+  margin-top: var(--space-1);
+  word-break: break-all;
+}
+
+.media-ph__tag {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  font-size: 0.65rem;
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-warn);
+  background: var(--c-warn-bg);
+  border: 1px solid var(--c-warn);
+  border-radius: var(--radius-s);
+  padding: 0.15em 0.5em;
+}
+
+/* --- Akkordeon (FAQ) ----------------------------------------------------- */
+.accordion {
+  border-top: 1px solid var(--color-border);
+}
+
+.accordion__item {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.accordion__trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) 0;
+  background: none;
+  border: none;
+  text-align: left;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.accordion__trigger .chevron {
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--c-water-700);
+  transition: transform var(--transition-base);
+}
+
+.accordion__trigger[aria-expanded='true'] .chevron {
+  transform: rotate(180deg);
+}
+
+.accordion__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--transition-base);
+}
+
+.accordion__panel[data-open='true'] {
+  grid-template-rows: 1fr;
+}
+
+.accordion__panel > div {
+  overflow: hidden;
+}
+
+.accordion__panel p {
+  padding-bottom: var(--space-4);
+  color: var(--color-text-soft);
+  margin: 0;
+}
+
+/* Ohne JS: Panels sind immer sichtbar (Fallback) */
+.no-js .accordion__panel {
+  grid-template-rows: 1fr;
+}
+
+/* --- Formular ------------------------------------------------------------ */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.form-field label {
+  font-weight: var(--fw-medium);
+  font-size: var(--fs-small);
+}
+
+.form-field .req {
+  color: var(--c-error);
+}
+
+.form-field .hint {
+  font-size: 0.8rem;
+  color: var(--color-text-soft);
+}
+
+.input,
+.textarea,
+.select {
+  min-height: 48px;
+  padding: 0.7em 0.85em;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-s);
+  color: var(--color-text);
+  width: 100%;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.textarea {
+  min-height: 7rem;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--color-focus);
+  box-shadow: 0 0 0 3px rgba(27, 143, 198, 0.28);
+}
+
+.form-field[data-error='true'] .input,
+.form-field[data-error='true'] .textarea,
+.form-field[data-error='true'] .select {
+  border-color: var(--c-error);
+}
+
+.field-error {
+  display: none;
+  align-items: center;
+  gap: 0.4em;
+  font-size: 0.8rem;
+  color: var(--c-error);
+}
+
+.form-field[data-error='true'] .field-error {
+  display: flex;
+}
+
+.field-error .icon {
+  width: 1em;
+  height: 1em;
+  flex: none;
+}
+
+.checkbox-field {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-3);
+  align-items: start;
+  margin-bottom: var(--space-5);
+}
+
+.checkbox-field input[type='checkbox'] {
+  width: 1.35rem;
+  height: 1.35rem;
+  margin-top: 0.15em;
+  accent-color: var(--c-water-600);
+  flex: none;
+}
+
+.checkbox-field label {
+  font-size: var(--fs-small);
+  color: var(--color-text-soft);
+}
+
+/* Honeypot – visuell versteckt (Spam-Schutz), bleibt für Screenreader neutral */
+.hp-field {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.form-grid {
+  display: grid;
+  gap: 0;
+}
+
+@media (min-width: 620px) {
+  .form-grid--2 {
+    grid-template-columns: 1fr 1fr;
+    gap: 0 var(--space-4);
+  }
+}
+
+.form-summary {
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-s);
+  margin-bottom: var(--space-5);
+}
+
+.form-summary[hidden] {
+  display: none;
+}
+
+.form-summary--error {
+  background: var(--c-error-bg);
+  border-left: 3px solid var(--c-error);
+  color: var(--c-error);
+}
+
+.form-panel {
+  padding: var(--space-6);
+  border-radius: var(--radius-m);
+  border: 1px solid var(--color-border);
+}
+
+.form-panel--success {
+  background: var(--c-success-bg);
+  border-color: var(--c-success);
+}
+
+.form-panel[hidden] {
+  display: none;
+}
+
+/* --- Notruf-Block -------------------------------------------------------- */
+.emergency {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4) var(--space-6);
+  padding: var(--space-6);
+  border-radius: var(--radius-l);
+  background: var(--color-bg-dark);
+  color: var(--color-text-inverse);
+}
+
+.emergency__label {
+  font-size: var(--fs-eyebrow);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--c-water-300);
+}
+
+.emergency__num {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw + 1rem, 2.25rem);
+  font-weight: var(--fw-heavy);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-inverse);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.emergency__num:hover {
+  color: var(--c-water-300);
+}
+
+/* --- Breadcrumb ---------------------------------------------------------- */
+.breadcrumb {
+  padding-block: var(--space-4);
+  font-size: var(--fs-small);
+}
+
+.breadcrumb ol {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4em;
+  padding: 0;
+  margin: 0;
+}
+
+.breadcrumb li {
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  max-width: none;
+  color: var(--color-text-soft);
+}
+
+.breadcrumb li:not(:last-child)::after {
+  content: '›';
+  color: var(--color-border-strong);
+}
+
+.breadcrumb a {
+  color: var(--color-text-soft);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  color: var(--color-link);
+  text-decoration: underline;
+}
+
+.breadcrumb [aria-current='page'] {
+  color: var(--color-text);
+  font-weight: var(--fw-medium);
+}
+
+/* --- Split-Layout (Text + Medium) ---------------------------------------- */
+.split {
+  display: grid;
+  gap: var(--space-6);
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .split {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-8);
+  }
+  .split--media-first .split__media {
+    order: -1;
+  }
+}
+
+/* --- Prose (Leistungsdetail, Rechtstexte) -------------------------------- */
+.prose > * + * {
+  margin-top: var(--space-4);
+}
+
+.prose h2 {
+  margin-top: var(--space-7);
+  margin-bottom: var(--space-2);
+}
+
+.prose h3 {
+  margin-top: var(--space-5);
+}
+
+.prose ul {
+  padding-left: 1.25rem;
+}
+
+.prose li {
+  margin-top: var(--space-2);
+}
+
+/* --- Reveal-Animation (nur bei aktivierter Bewegung via JS) -------------- */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity var(--transition-slow), transform var(--transition-slow);
+}
+
+.js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.js .reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity var(--transition-slow), transform var(--transition-slow);
+}
+
+.js .reveal-stagger.is-visible > * {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal,
+  .js .reveal-stagger > * {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

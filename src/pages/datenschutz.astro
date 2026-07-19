@@ -1,0 +1,81 @@
+---
+import Base from '../layouts/Base.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import Icon from '../components/Icon.astro';
+
+const breadcrumbItems = [
+  { name: 'Start', url: '/' },
+  { name: 'Datenschutz', url: '/datenschutz/' },
+];
+
+const gliederung = [
+  { t: 'Verantwortlicher', d: 'Firmierung, Anschrift, Kontakt der verantwortlichen Stelle.' },
+  { t: 'Hosting und Server-Logfiles', d: 'Hosting-Anbieter [PH-08] und Auftragsverarbeitung; Art und Zweck der Server-Logfiles.' },
+  { t: 'Kontaktaufnahme (Telefon, E-Mail, WhatsApp)', d: 'Verarbeitung bei Kontaktaufnahme; Hinweis auf WhatsApp/Meta und Drittlandbezug prüfen.' },
+  { t: 'Kontaktformular', d: 'Zwecke, Rechtsgrundlage, Speicherdauer und Empfänger der über das Formular übermittelten Daten.' },
+  { t: 'Lokale Einbindung von Schriften', d: 'Schriften werden lokal eingebunden; keine Übertragung an Dritte.' },
+  { t: 'Cookies und Analyse', d: 'Im Auslieferungszustand keine Cookies zu Analysezwecken; ggf. später eingesetzte Dienste ergänzen.' },
+  { t: 'Betroffenenrechte', d: 'Auskunft, Berichtigung, Löschung, Einschränkung, Datenübertragbarkeit und Widerspruch.' },
+  { t: 'Beschwerderecht', d: 'Beschwerderecht bei der zuständigen Aufsichtsbehörde (Berlin).' },
+  { t: 'Aktualität', d: 'Stand und Aktualität dieser Datenschutzerklärung.' },
+];
+---
+<Base
+  title="Datenschutzerklärung | SANI Trocknung"
+  description="Datenschutzerklärung der SANI Trocknung."
+  breadcrumb={breadcrumbItems}
+>
+  <Breadcrumb items={breadcrumbItems} />
+
+  <section class="section" style="padding-top:var(--space-5)">
+    <div class="container container--narrow prose">
+      <span class="eyebrow">Rechtliches</span>
+      <h1>Datenschutzerklärung</h1>
+      <span class="measure-line"></span>
+
+      <div class="draft-note" role="note" style="margin-top:var(--space-5)">
+        <Icon name="warn" size={20} />
+        <div>
+          <strong>Entwurf – vor Veröffentlichung durch fachkundige Stelle prüfen.</strong>
+          Dies ist eine <strong>Gliederung</strong> (Platzhalter [PH-04]) und keine
+          Rechtsberatung. Die vollständigen Texte sind vor Veröffentlichung durch
+          eine fachkundige Person oder einen Rechtsdienst zu erstellen bzw. zu prüfen.
+        </div>
+      </div>
+
+      <p>
+        Grundprinzip: Datensparsamkeit. Im Auslieferungszustand ohne Cookies, ohne
+        Analytics und ohne externe Requests (Schriften lokal, keine externen Karten
+        oder Videos).
+      </p>
+
+      <ol class="ds-list">
+        {gliederung.map((g) => (
+          <li>
+            <strong>{g.t}</strong>
+            <span>{g.d}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .ds-list {
+    list-style: decimal;
+    padding-left: 1.4rem;
+    margin-top: var(--space-5);
+  }
+  .ds-list li {
+    margin-bottom: var(--space-4);
+    max-width: 68ch;
+  }
+  .ds-list li strong {
+    display: block;
+  }
+  .ds-list li span {
+    color: var(--color-text-soft);
+    font-size: var(--fs-small);
+  }
+</style>

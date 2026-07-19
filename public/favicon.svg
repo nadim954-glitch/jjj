@@ -1,0 +1,7 @@
+<!-- [PH-06] Platzhalter-Favicon. Vor Veröffentlichung aus dem Logo ableiten. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <rect width="32" height="32" rx="7" fill="#0a2033"/>
+  <path d="M16 6c3.4 4.4 6 8 6 11.2A6 6 0 1 1 10 17.2C10 14 12.6 10.4 16 6Z"
+        fill="none" stroke="#2fa8dc" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M12.5 17.5h7" stroke="#2fa8dc" stroke-width="2" stroke-linecap="round"/>
+</svg>

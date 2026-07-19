@@ -1,0 +1,76 @@
+---
+import { site } from '../config/site';
+import { mainNav, services } from '../data/nav';
+import Icon from './Icon.astro';
+const path = Astro.url.pathname;
+---
+<div class="mobile-nav" id="mobile-nav" data-mobile-nav hidden>
+  <div class="mobile-nav__backdrop" data-menu-close></div>
+  <div
+    class="mobile-nav__panel on-dark"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Hauptmenü"
+  >
+    <div class="mobile-nav__head">
+      <span class="brand__name">{site.brand}</span>
+      <button type="button" class="burger" data-menu-close aria-label="Menü schließen">
+        <Icon name="close" size={26} title="Menü schließen" />
+      </button>
+    </div>
+
+    <div class="mobile-nav__actions">
+      <a href="/kontakt/#formular" class="btn btn-primary btn-block" data-menu-close>
+        Wasserschaden melden
+      </a>
+      <a href={`tel:${site.phoneLink}`} class="btn btn-secondary btn-block btn-phone">
+        <Icon name="phone" size={18} />
+        Anrufen · 24/7
+      </a>
+    </div>
+
+    <nav aria-label="Hauptnavigation (mobil)">
+      <ul class="mobile-nav__list">
+        <li>
+          <details class="mobile-nav__group" open={path.startsWith('/leistungen')}>
+            <summary>Leistungen</summary>
+            <ul>
+              <li>
+                <a href="/leistungen/" aria-current={path === '/leistungen/' ? 'page' : undefined}>
+                  Alle Leistungen
+                </a>
+              </li>
+              {
+                services.map((s) => (
+                  <li>
+                    <a
+                      href={`/leistungen/${s.slug}/`}
+                      aria-current={path === `/leistungen/${s.slug}/` ? 'page' : undefined}
+                    >
+                      {s.label}
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </details>
+        </li>
+        {
+          mainNav
+            .filter((i) => !('children' in i && i.children))
+            .map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="mobile-nav__top"
+                  aria-current={path.startsWith(item.href) ? 'page' : undefined}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+        }
+      </ul>
+    </nav>
+  </div>
+</div>

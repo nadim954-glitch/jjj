@@ -1,0 +1,17 @@
+---
+import Icon from './Icon.astro';
+interface Props {
+  slug: string;
+  label: string;
+  text: string;
+  icon: string;
+}
+const { slug, label, text, icon } = Astro.props;
+---
+<article class="card">
+  <Icon name={icon} size={30} class="card__icon" />
+  <h3 class="card__title">
+    <a href={`/leistungen/${slug}/`}>{label}</a>
+  </h3>
+  <p class="card__text">{text}</p>
+</article>
